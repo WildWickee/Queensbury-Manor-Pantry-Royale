@@ -171,14 +171,14 @@
 
           <div class="sm:col-span-2">
             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Qty</label>
-            <input type="number" step="0.01" id="ov-qty" min="1" value="1" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-900 text-center outline-none focus:ring-2 focus:ring-indigo-600">
+            <input type="number" step="1" id="ov-qty" min="1" value="1" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-900 text-center outline-none focus:ring-2 focus:ring-indigo-600">
           </div>
 
           <div class="sm:col-span-3">
             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Unit</label>
             <select id="ov-unit" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-600">
-              <option value="bottle">bottle</option>
               <option value="jar">jar</option>
+              <option value="bottle">bottle</option>
               <option value="can">can</option>
               <option value="box">box</option>
               <option value="bag">bag</option>
@@ -460,7 +460,7 @@
       // Safe Auto-Fix: Convert items that previously defaulted to "oz" into count-based units
       inventory.forEach(item => {
         if (item.unit === 'oz' && item.pkgSize === 1) {
-          if (item.zone === 'Jars') item.unit = 'bottle';
+          if (item.zone === 'Jars') item.unit = 'jar';
           else if (item.zone === 'Boxes') item.unit = 'box';
           else if (item.zone === 'Bags') item.unit = 'bag';
           else if (item.zone === 'Cans') item.unit = 'can';
@@ -572,6 +572,7 @@
       inputEl.value = '';
     }
 
+    // Direct +/- Stepper Fix: Always increments or decrements by 1 unit
     function adjustStock(index, delta) {
       inventory[index].inStock = Math.max(0, Math.round((inventory[index].inStock + delta) * 100) / 100);
       saveData();
@@ -787,7 +788,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
             <p class="text-xs text-slate-500 mt-1">In Stock: <span class="font-bold text-indigo-600 text-sm">${item.inStock} ${item.unit}</span></p>
           </div>
           <div class="flex items-center justify-between border-t border-slate-100 pt-2">
-            <span class="text-xs text-slate-400 font-medium">$${item.price.toFixed(2)} / ${item.pkgSize} ${item.unit}</span>
+            <span class="text-xs text-slate-400 font-medium">$${item.price.toFixed(2)} / 1 ${item.unit}</span>
             <div class="flex gap-1">
               <button onclick="adjustStock(${index}, -1)" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-800 text-sm flex items-center justify-center">-</button>
               <button onclick="adjustStock(${index}, 1)" class="w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm flex items-center justify-center shadow-sm">+</button>
