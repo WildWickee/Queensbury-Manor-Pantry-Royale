@@ -138,7 +138,7 @@
       </div>
     </section>
 
-    <!-- TAB 1: PANTRY STOCK (FULL OVERHAUL LOGGING) -->
+    <!-- TAB 1: PANTRY STOCK -->
     <section id="tab-inventory" class="hidden space-y-6">
       
       <!-- Overhaul Entry Form -->
@@ -150,7 +150,6 @@
           <span class="text-xs font-semibold text-slate-500">Fast Item Logging</span>
         </div>
 
-        <!-- Form Grid with Explicit Unit Selector including Bottle -->
         <form id="overhaul-form" onsubmit="handleOverhaulSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
           <div class="sm:col-span-4">
             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Item Name</label>
@@ -195,7 +194,6 @@
           </div>
         </form>
 
-        <!-- Smart Quick-Add Bar -->
         <div class="pt-2">
           <div class="text-xs font-bold text-slate-600 uppercase mb-1">Or Auto-Add via Smart Detector:</div>
           <div class="flex gap-2">
@@ -457,8 +455,9 @@
       inventory = storedInv ? JSON.parse(storedInv) : [];
       recipes = storedRec ? JSON.parse(storedRec) : [];
 
-      // Safe Auto-Fix: Convert items that previously defaulted to "oz" into count-based units
+      // Ensure every item has a unique ID for bulletproof deletion
       inventory.forEach(item => {
+        if (!item.id) item.id = 'inv-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
         if (item.unit === 'oz' && item.pkgSize === 1) {
           if (item.zone === 'Jars') item.unit = 'jar';
           else if (item.zone === 'Boxes') item.unit = 'box';
@@ -469,6 +468,7 @@
       });
 
       recipes.forEach(r => {
+        if (!r.id) r.id = 'rec-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
         if (!plannerState[r.id]) {
           plannerState[r.id] = { selected: false, targetServings: r.baseServings };
         }
@@ -524,6 +524,7 @@
         inventory[existingIdx].unit = unit;
       } else {
         inventory.push({
+          id: 'inv-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
           name: name,
           zone: zone,
           inStock: qty,
@@ -558,6 +559,7 @@
         inventory[existingIdx].inStock += 1;
       } else {
         inventory.push({
+          id: 'inv-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
           name: rawName,
           zone: matchedRule.zone,
           inStock: 1,
@@ -572,9 +574,24 @@
       inputEl.value = '';
     }
 
-    // Direct +/- Stepper Fix: Always increments or decrements by 1 unit
-    function adjustStock(index, delta) {
-      inventory[index].inStock = Math.max(0, Math.round((inventory[index].inStock + delta) * 100) / 100);
+    function adjustStockById(id, delta) {
+      const item = inventory.find(i => i.id === id);
+      if (item) {
+        item.inStock = Math.max(0, Math.round((item.inStock + delta) * 100) / 100);
+        saveData();
+        renderAll();
+      }
+    }
+
+    function deleteInventoryItemById(id) {
+      inventory = inventory.filter(i => i.id !== id);
+      saveData();
+      renderAll();
+    }
+
+    function deleteRecipeById(id) {
+      recipes = recipes.filter(r => r.id !== id);
+      delete plannerState[id];
       saveData();
       renderAll();
     }
@@ -773,7 +790,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
         return;
       }
 
-      filtered.forEach((item, index) => {
+      filtered.forEach((item) => {
         const zoneIcons = { Jars: '🏺', Cans: '🥫', Boxes: '📦', Bags: '🛍️', Fridge: '🧀', Freezer: '❄️' };
         
         const card = document.createElement('div');
@@ -782,7 +799,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
           <div>
             <div class="flex justify-between items-start">
               <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">${zoneIcons[item.zone] || '📦'} ${item.zone}</span>
-              <button onclick="deleteInventoryItem(${index})" class="text-slate-400 hover:text-rose-600 text-xs"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="deleteInventoryItemById('${item.id}')" class="text-slate-400 hover:text-rose-600 text-xs p-1" title="Delete item"><i class="fa-solid fa-trash"></i></button>
             </div>
             <h3 class="font-bold text-slate-900 text-base mt-2">${item.name}</h3>
             <p class="text-xs text-slate-500 mt-1">In Stock: <span class="font-bold text-indigo-600 text-sm">${item.inStock} ${item.unit}</span></p>
@@ -790,8 +807,8 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
           <div class="flex items-center justify-between border-t border-slate-100 pt-2">
             <span class="text-xs text-slate-400 font-medium">$${item.price.toFixed(2)} / 1 ${item.unit}</span>
             <div class="flex gap-1">
-              <button onclick="adjustStock(${index}, -1)" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-800 text-sm flex items-center justify-center">-</button>
-              <button onclick="adjustStock(${index}, 1)" class="w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm flex items-center justify-center shadow-sm">+</button>
+              <button onclick="adjustStockById('${item.id}', -1)" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-800 text-sm flex items-center justify-center">-</button>
+              <button onclick="adjustStockById('${item.id}', 1)" class="w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm flex items-center justify-center shadow-sm">+</button>
             </div>
           </div>
         `;
@@ -880,7 +897,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
         return;
       }
 
-      recipes.forEach((r, idx) => {
+      recipes.forEach((r) => {
         const div = document.createElement('div');
         div.className = "bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-2 flex flex-col justify-between";
         const ingNames = r.ingredients.map(i => i.name).join(', ');
@@ -888,7 +905,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
           <div>
             <div class="flex justify-between items-start">
               <h3 class="font-bold text-slate-900 text-sm">${r.name}</h3>
-              <button onclick="deleteRecipe(${idx})" class="text-slate-400 hover:text-rose-600 text-xs"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="deleteRecipeById('${r.id}')" class="text-slate-400 hover:text-rose-600 text-xs p-1" title="Delete recipe"><i class="fa-solid fa-trash"></i></button>
             </div>
             <p class="text-xs text-slate-500 mt-2">Ingredients: ${ingNames}</p>
           </div>
@@ -926,24 +943,13 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       renderDashboard();
     }
 
-    function deleteInventoryItem(idx) {
-      inventory.splice(idx, 1);
-      saveData();
-      renderAll();
-    }
-
-    function deleteRecipe(idx) {
-      recipes.splice(idx, 1);
-      saveData();
-      renderAll();
-    }
-
     function openCustomItemModal() { document.getElementById('item-modal').classList.remove('hidden'); }
     function closeCustomItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
 
     function handleSaveCustomItem(e) {
       e.preventDefault();
       const item = {
+        id: 'inv-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
         name: document.getElementById('modal-name').value.trim(),
         zone: document.getElementById('modal-zone').value,
         inStock: parseFloat(document.getElementById('modal-stock').value) || 1,
@@ -1002,7 +1008,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
         return;
       }
 
-      const newRec = { id: `rec-${Date.now()}`, name, baseServings: servings, ingredients };
+      const newRec = { id: 'rec-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5), name, baseServings: servings, ingredients };
       recipes.push(newRec);
       plannerState[newRec.id] = { selected: false, targetServings: servings };
 
