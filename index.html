@@ -50,7 +50,7 @@
   <header class="bg-[#2a1708] border-b-4 border-amber-500 p-3 sticky top-0 z-40 shadow-2xl">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
       
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="openWelcomeModal()">
         <div class="w-10 h-10 bg-amber-500 border-2 border-amber-200 flex items-center justify-center text-stone-950 text-xl font-black shadow">
           <i class="fa-solid fa-utensils"></i>
         </div>
@@ -220,7 +220,7 @@
     <section id="tab-planner" class="hidden space-y-6">
       
       <div class="parchment-box p-3 font-vt text-xl font-bold flex justify-between items-center">
-        <span>STEP 2: Check off meals with a green "$0 READY" badge. These cost nothing extra to cook today!</span>
+        <span>STEP 2: Check off meals with a green "$0 READY" badge. Click below to deduct ingredients as you cook!</span>
         <button onclick="switchTab('synthesizer')" class="nes-btn px-3 py-1 bg-purple-600 text-white font-pixel text-[8px] uppercase">NEXT: STEP 3 &rarr;</button>
       </div>
 
@@ -233,8 +233,8 @@
 
           <div id="planner-recipe-list" class="space-y-2 max-h-[400px] overflow-y-auto pr-1"></div>
 
-          <button onclick="deductSelectedMeals()" class="nes-btn w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-pixel text-[10px] uppercase">
-            COOK MEALS (SUBTRACT FROM STOCK)
+          <button onclick="deductSelectedMeals()" class="nes-btn w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-pixel text-[10px] uppercase font-bold">
+            COOK MEALS (DEDUCT FROM STOCK)
           </button>
         </div>
 
@@ -288,7 +288,62 @@
 
   </main>
 
-  <!-- Modals -->
+  <!-- PAGE LOAD GUIDED POP-UP MODAL -->
+  <div id="welcome-modal" class="fixed inset-0 bg-stone-950/85 backdrop-blur-md flex items-center justify-center p-4 z-50">
+    <div class="parchment-box max-w-lg w-full p-6 space-y-5 shadow-2xl relative border-4 border-amber-800">
+      <div class="border-b-2 border-amber-800 pb-3">
+        <span class="font-pixel text-[9px] text-amber-900 uppercase font-bold block">QUEENSBURY MANOR COMMAND</span>
+        <h2 class="font-pixel text-sm text-stone-950 mt-1 uppercase">WHAT DO YOU WANT TO DO TODAY?</h2>
+      </div>
+
+      <div class="space-y-3 font-pixel text-[9px]">
+        
+        <!-- Option 1 -->
+        <button onclick="handleGuidedAction('inventory')" class="nes-btn w-full p-3 bg-amber-500 hover:bg-amber-400 text-stone-950 text-left flex items-center gap-3">
+          <i class="fa-solid fa-boxes-stacked text-xl"></i>
+          <div>
+            <div class="font-bold">1. LOG / STOCK PANTRY INVENTORY</div>
+            <div class="font-vt text-lg text-stone-800 font-normal">Scan Jars, Cans, Boxes, and Bags using AI auto-fill.</div>
+          </div>
+        </button>
+
+        <!-- Option 2 -->
+        <button onclick="handleGuidedAction('planner')" class="nes-btn w-full p-3 bg-emerald-600 hover:bg-emerald-500 text-stone-950 text-left flex items-center gap-3">
+          <i class="fa-solid fa-calendar-check text-xl"></i>
+          <div>
+            <div class="font-bold text-white">2. PLAN MEALS ($0 ON-HAND FOOD)</div>
+            <div class="font-vt text-lg text-emerald-100 font-normal">Pick $0.00 meals & deduct food as you cook.</div>
+          </div>
+        </button>
+
+        <!-- Option 3 -->
+        <button onclick="handleGuidedAction('synthesizer')" class="nes-btn w-full p-3 bg-purple-700 hover:bg-purple-600 text-white text-left flex items-center gap-3">
+          <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+          <div>
+            <div class="font-bold">3. GET AI IDEAS FOR LEFTOVER FOOD</div>
+            <div class="font-vt text-lg text-purple-100 font-normal">Synthesize recipe prompts for remaining random food.</div>
+          </div>
+        </button>
+
+        <!-- Option 4 -->
+        <button onclick="handleGuidedAction('add-recipe')" class="nes-btn w-full p-3 bg-stone-800 hover:bg-stone-700 text-amber-200 text-left flex items-center gap-3">
+          <i class="fa-solid fa-plus-circle text-xl"></i>
+          <div>
+            <div class="font-bold">4. ADD A NEW RECIPE TO LIBRARY</div>
+            <div class="font-vt text-lg text-amber-100 font-normal">Create custom family recipes with ingredients.</div>
+          </div>
+        </button>
+
+      </div>
+
+      <div class="border-t-2 border-amber-800 pt-3 flex justify-between items-center">
+        <span class="font-vt text-lg text-stone-800">Choose an option to jump right in!</span>
+        <button onclick="closeWelcomeModal()" class="nes-btn px-3 py-1 bg-stone-800 text-stone-200 font-pixel text-[8px]">JUST EXPLORE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Custom Item Modal -->
   <div id="item-modal" class="fixed inset-0 bg-stone-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="nes-box-gold max-w-md w-full p-5 space-y-4">
       <h3 class="font-pixel text-xs text-white uppercase border-b-2 border-amber-800 pb-2">ADD ITEM MANUALLY</h3>
@@ -427,6 +482,19 @@
       localStorage.setItem('qm_recipes', JSON.stringify(recipes));
     }
 
+    function handleGuidedAction(action) {
+      closeWelcomeModal();
+      if (action === 'add-recipe') {
+        switchTab('recipes');
+        openCustomRecipeModal();
+      } else {
+        switchTab(action);
+      }
+    }
+
+    function openWelcomeModal() { document.getElementById('welcome-modal').classList.remove('hidden'); }
+    function closeWelcomeModal() { document.getElementById('welcome-modal').classList.add('hidden'); }
+
     function handleSmartQuickAdd() {
       const inputEl = document.getElementById('quick-add-input');
       const rawName = inputEl.value.trim();
@@ -523,8 +591,11 @@
       return netList;
     }
 
+    // --- DEDUCT INVENTORY WHEN MEAL IS COOKED ---
     function deductSelectedMeals() {
       let count = 0;
+      let deductedLog = [];
+
       recipes.forEach(r => {
         const state = plannerState[r.id];
         if (state && state.selected) {
@@ -532,17 +603,22 @@
           r.ingredients.forEach(ing => {
             const invItem = inventory.find(i => i.name.toLowerCase() === ing.name.toLowerCase());
             if (invItem) {
-              invItem.inStock = Math.max(0, Math.round((invItem.inStock - (ing.qty * scale)) * 100) / 100);
+              const amountUsed = ing.qty * scale;
+              invItem.inStock = Math.max(0, Math.round((invItem.inStock - amountUsed) * 100) / 100);
+              deductedLog.push(`${ing.name}: -${amountUsed} ${ing.unit}`);
             }
           });
           count++;
+          plannerState[r.id].selected = false; // reset check box after cooking
         }
       });
 
       if (count > 0) {
         saveData();
         renderAll();
-        alert("Cooked meals deducted from stock!");
+        alert(`Cooked ${count} meal(s)!\n\nIngredients Deducted from Stock:\n` + deductedLog.join('\n'));
+      } else {
+        alert("Select at least one meal in the planner first!");
       }
     }
 
