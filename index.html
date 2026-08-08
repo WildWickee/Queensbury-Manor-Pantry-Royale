@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-amber-50/50">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Queensbury Manor: Pantry Royale</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    [x-cloak] { display: none !important; }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans text-slate-800 antialiased selection:bg-amber-200">
+
+  <!-- Queensbury Manor Culinary Header -->
+  <header class="bg-stone-900 text-amber-100 shadow-xl border-b-4 border-amber-600">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 bg-amber-600 rounded-2xl flex items-center justify-center text-stone-900 text-2xl font-black shadow-inner">
+          <i class="fa-solid fa-utensils"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-black tracking-wide text-white uppercase font-serif">Queensbury Manor</h1>
+          <p class="text-xs text-amber-400 font-medium">Pantry Royale & Zero-Budget Commander</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex flex-wrap gap-1 bg-stone-800/80 p-1.5 rounded-xl border border-stone-700 text-xs font-bold">
+        <button id="nav-inventory" onclick="switchTab('inventory')" class="px-3 py-2 rounded-lg transition-all bg-amber-600 text-stone-950 shadow">
+          <i class="fa-solid fa-boxes-stacked mr-1"></i> Shelf Inventory
+        </button>
+        <button id="nav-planner" onclick="switchTab('planner')" class="px-3 py-2 rounded-lg transition-all text-amber-200 hover:text-white">
+          <i class="fa-solid fa-shield-halved mr-1"></i> $0 Quest Planner
+        </button>
+        <button id="nav-synthesizer" onclick="switchTab('synthesizer')" class="px-3 py-2 rounded-lg transition-all text-amber-200 hover:text-white">
+          <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Meal Synthesizer
+        </button>
+        <button id="nav-recipes" onclick="switchTab('recipes')" class="px-3 py-2 rounded-lg transition-all text-amber-200 hover:text-white">
+          <i class="fa-solid fa-book-bookmark mr-1"></i> Recipe Library
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+    <!-- TAB 1: SHELF INVENTORY & SMART QUICK-ADD -->
+    <section id="tab-inventory" class="space-y-6">
+      
+      <!-- Smart AI Auto-Fill Quick Bar -->
+      <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-stone-700 flex items-center gap-2">
+            <i class="fa-solid fa-bolt text-amber-500"></i> Smart AI Stock Entry
+          </h2>
+          <span class="text-[11px] text-stone-400 font-medium">Auto-populates container zone & standard unit size</span>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input type="text" id="quick-add-input" placeholder="Type item name (e.g. 'peanut butter', 'black beans', 'penne pasta')..." class="flex-1 px-4 py-2.5 border border-stone-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-amber-500 font-medium">
+          <button onclick="handleSmartQuickAdd()" class="bg-amber-600 hover:bg-amber-700 text-stone-950 font-black px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow flex items-center justify-center gap-2">
+            <i class="fa-solid fa-plus"></i> Auto-Categorize & Add
+          </button>
+        </div>
+      </div>
+
+      <!-- Container Shelf Filter Tabs -->
+      <div class="flex flex-wrap gap-2 justify-between items-center border-b border-stone-200 pb-3">
+        <div class="flex flex-wrap gap-1">
+          <button onclick="filterContainer('All')" id="btn-filter-All" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-900 text-amber-400">All Shelves</button>
+          <button onclick="filterContainer('Jars')" id="btn-filter-Jars" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">🏺 Jar Vault</button>
+          <button onclick="filterContainer('Cans')" id="btn-filter-Cans" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">🥫 Can Citadel</button>
+          <button onclick="filterContainer('Boxes')" id="btn-filter-Boxes" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">📦 Box Bunker</button>
+          <button onclick="filterContainer('Bags')" id="btn-filter-Bags" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">🛍️ Bag Depot</button>
+          <button onclick="filterContainer('Fridge')" id="btn-filter-Fridge" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">🧀 Chilled Chamber</button>
+          <button onclick="filterContainer('Freezer')" id="btn-filter-Freezer" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">❄️ Frost Crypt</button>
+        </div>
+        <button onclick="openCustomItemModal()" class="text-xs font-bold text-amber-800 hover:text-amber-950 flex items-center gap-1">
+          <i class="fa-solid fa-sliders"></i> Manual Item Creator
+        </button>
+      </div>
+
+      <!-- Live Inventory Cards Grid -->
+      <div id="inventory-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Inventory Cards Injected Here -->
+      </div>
+    </section>
+
+    <!-- TAB 2: $0 QUEST PLANNER -->
+    <section id="tab-planner" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Recipe Selection -->
+        <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-5 space-y-4">
+          <h2 class="text-base font-black text-stone-900 uppercase font-serif border-b border-stone-100 pb-2 flex items-center justify-between">
+            <span>Select 2-Week Meals</span>
+            <span id="ready-count-badge" class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">0 Ready</span>
+          </h2>
+          <p class="text-xs text-stone-500">Pick meals for your 14-day rotation. The engine highlights meals you can cook right now for **$0.00** using existing shelf stock!</p>
+
+          <div id="planner-recipe-list" class="space-y-3 max-h-[450px] overflow-y-auto pr-1">
+            <!-- Planner Checklist Injected Here -->
+          </div>
+
+          <button onclick="deductSelectedMeals()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow flex items-center justify-center gap-2">
+            <i class="fa-solid fa-utensils"></i> Deduct Cooked Meals From Shelves
+          </button>
+        </div>
+
+        <!-- Net Shopping List Output -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-stone-200 p-5 space-y-4">
+          <div class="flex justify-between items-center border-b border-stone-100 pb-3">
+            <div>
+              <h2 class="text-base font-black text-stone-900 uppercase font-serif">Net Shopping Deficit</h2>
+              <p class="text-xs text-stone-500">Only shows items you don't already have on your shelves.</p>
+            </div>
+            <span id="total-shopping-cost" class="text-xl font-black text-emerald-700">$0.00</span>
+          </div>
+
+          <div id="net-shopping-container" class="space-y-3">
+            <!-- Net shopping items injected here -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3: SCRAPPY KITCHEN AI SYNTHESIZER -->
+    <section id="tab-synthesizer" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 space-y-4">
+        <div>
+          <h2 class="text-base font-black text-stone-900 uppercase font-serif">Scrappy Kitchen AI Prompt Generator</h2>
+          <p class="text-xs text-stone-500 mt-1">Stuck on what to make with remaining random items? Click below to generate a tailored prompt using your exact live shelf stock to paste into ChatGPT or Gemini!</p>
+        </div>
+
+        <button onclick="generatePantryRaidPrompt()" class="bg-stone-900 hover:bg-stone-800 text-amber-400 font-bold px-5 py-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Synthesize Zero-Dollar Prompt
+        </button>
+
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-stone-600">Generated Prompt (Ready to Copy)</label>
+          <textarea id="synthesizer-output" rows="8" readonly class="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl text-xs font-mono text-stone-800 outline-none"></textarea>
+        </div>
+
+        <button onclick="copySynthesizerPrompt()" class="bg-amber-600 hover:bg-amber-700 text-stone-950 font-bold px-4 py-2 rounded-lg text-xs uppercase tracking-wider transition-all">
+          <i class="fa-solid fa-copy mr-1"></i> Copy Prompt to Clipboard
+        </button>
+      </div>
+    </section>
+
+    <!-- TAB 4: RECIPE LIBRARY -->
+    <section id="tab-recipes" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 space-y-4">
+        <div class="flex justify-between items-center border-b border-stone-100 pb-3">
+          <h2 class="text-base font-black text-stone-900 uppercase font-serif">Master Recipe Library</h2>
+        </div>
+        <div id="recipe-library-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Recipe Cards -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Manual Custom Item Modal -->
+  <div id="item-modal" class="fixed inset-0 bg-stone-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-stone-200">
+      <h3 class="text-base font-black text-stone-900 uppercase font-serif border-b pb-2">Manual Item Creator</h3>
+      <form id="item-form" onsubmit="handleSaveCustomItem(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-stone-600 mb-1">Item Name</label>
+          <input type="text" id="modal-name" required placeholder="e.g., Salsa" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-amber-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">Container Zone</label>
+            <select id="modal-zone" class="w-full px-3 py-2 border rounded-xl text-xs outline-none">
+              <option value="Jars">🏺 Jar Vault</option>
+              <option value="Cans">🥫 Can Citadel</option>
+              <option value="Boxes">📦 Box Bunker</option>
+              <option value="Bags">🛍️ Bag Depot</option>
+              <option value="Fridge">🧀 Chilled Chamber</option>
+              <option value="Freezer">❄️ Frost Crypt</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">Unit</label>
+            <input type="text" id="modal-unit" required placeholder="can, oz, box" class="w-full px-3 py-2 border rounded-xl text-xs outline-none">
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">In Stock</label>
+            <input type="number" step="0.01" id="modal-stock" value="1" required class="w-full px-3 py-2 border rounded-xl text-xs outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">Pkg Size</label>
+            <input type="number" step="0.01" id="modal-pkg-size" value="1" required class="w-full px-3 py-2 border rounded-xl text-xs outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-stone-600 mb-1">Price ($)</label>
+            <input type="number" step="0.01" id="modal-price" value="1.99" required class="w-full px-3 py-2 border rounded-xl text-xs outline-none">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t">
+          <button type="button" onclick="closeCustomItemModal()" class="px-4 py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 rounded-lg">Cancel</button>
+          <button type="submit" class="px-4 py-2 text-xs font-bold bg-amber-600 text-stone-950 rounded-lg hover:bg-amber-700">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // --- SMART AUTO-CLASSIFICATION DICTIONARY ---
+    const AUTO_RULES = [
+      { keywords: ['peanut butter', 'jam', 'jelly', 'salsa', 'marinara', 'sauce', 'mayo', 'pickles', 'dressing', 'syrup', 'oil'], zone: 'Jars', unit: 'oz', pkgSize: 16, price: 2.99 },
+      { keywords: ['beans', 'black beans', 'chickpeas', 'tomatoes', 'diced tomatoes', 'soup', 'tuna', 'corn', 'coconut milk'], zone: 'Cans', unit: 'can', pkgSize: 1, price: 0.99 },
+      { keywords: ['pasta', 'penne', 'spaghetti', 'rice', 'cereal', 'mac', 'macaroni', 'oats', 'pancake', 'stuffing', 'mix'], zone: 'Boxes', unit: 'oz', pkgSize: 16, price: 1.49 },
+      { keywords: ['flour', 'sugar', 'chips', 'tortillas', 'nuts', 'pretzels', 'popcorn', 'snack'], zone: 'Bags', unit: 'oz', pkgSize: 16, price: 2.49 },
+      { keywords: ['milk', 'cheese', 'butter', 'eggs', 'yogurt', 'sour cream', 'carrots', 'peppers', 'lettuce'], zone: 'Fridge', unit: 'item', pkgSize: 1, price: 2.99 },
+      { keywords: ['chicken', 'beef', 'pork', 'ground beef', 'peas', 'frozen', 'waffles'], zone: 'Freezer', unit: 'oz', pkgSize: 16, price: 4.99 }
+    ];
+
+    const DEFAULT_INVENTORY = [
+      { name: "Peanut Butter", zone: "Jars", inStock: 2, unit: "oz", pkgSize: 16, price: 2.99 },
+      { name: "Black Beans", zone: "Cans", inStock: 4, unit: "can", pkgSize: 1, price: 0.99 },
+      { name: "Penne Pasta", zone: "Boxes", inStock: 32, unit: "oz", pkgSize: 16, price: 1.49 },
+      { name: "All Purpose Flour", zone: "Bags", inStock: 64, unit: "oz", pkgSize: 16, price: 2.49 },
+      { name: "Chicken Breast", zone: "Freezer", inStock: 32, unit: "oz", pkgSize: 16, price: 4.99 },
+      { name: "Cheddar Cheese", zone: "Fridge", inStock: 8, unit: "oz", pkgSize: 8, price: 2.99 }
+    ];
+
+    const DEFAULT_RECIPES = [
+      {
+        id: "rec-1",
+        name: "Pantry Black Bean & Pasta Skillet",
+        baseServings: 4,
+        ingredients: [
+          { name: "Black Beans", qty: 2, unit: "can" },
+          { name: "Penne Pasta", qty: 12, unit: "oz" },
+          { name: "Cheddar Cheese", qty: 4, unit: "oz" }
+        ]
+      },
+      {
+        id: "rec-2",
+        name: "Garlic Chicken Breast & Rice",
+        baseServings: 4,
+        ingredients: [
+          { name: "Chicken Breast", qty: 16, unit: "oz" },
+          { name: "Penne Pasta", qty: 8, unit: "oz" }
+        ]
+      }
+    ];
+
+    let inventory = [];
+    let recipes = [];
+    let plannerState = {};
+    let activeContainerFilter = 'All';
+
+    function initData() {
+      const storedInv = localStorage.getItem('qm_inventory');
+      const storedRec = localStorage.getItem('qm_recipes');
+
+      inventory = storedInv ? JSON.parse(storedInv) : DEFAULT_INVENTORY;
+      recipes = storedRec ? JSON.parse(storedRec) : DEFAULT_RECIPES;
+
+      recipes.forEach(r => {
+        plannerState[r.id] = { selected: false, targetServings: r.baseServings };
+      });
+
+      saveData();
+      renderAll();
+    }
+
+    function saveData() {
+      localStorage.setItem('qm_inventory', JSON.stringify(inventory));
+      localStorage.setItem('qm_recipes', JSON.stringify(recipes));
+    }
+
+    // --- SMART QUICK-ADD LOGIC ---
+    function handleSmartQuickAdd() {
+      const inputEl = document.getElementById('quick-add-input');
+      const rawName = inputEl.value.trim();
+      if (!rawName) return;
+
+      const lower = rawName.toLowerCase();
+      let matchedRule = AUTO_RULES.find(r => r.keywords.some(kw => lower.includes(kw)));
+
+      if (!matchedRule) {
+        matchedRule = { zone: 'Boxes', unit: 'oz', pkgSize: 16, price: 1.99 };
+      }
+
+      const existingIdx = inventory.findIndex(i => i.name.toLowerCase() === rawName.toLowerCase());
+
+      if (existingIdx >= 0) {
+        inventory[existingIdx].inStock += matchedRule.pkgSize;
+      } else {
+        inventory.push({
+          name: rawName,
+          zone: matchedRule.zone,
+          inStock: matchedRule.pkgSize,
+          unit: matchedRule.unit,
+          pkgSize: matchedRule.pkgSize,
+          price: matchedRule.price
+        });
+      }
+
+      saveData();
+      renderAll();
+      inputEl.value = '';
+    }
+
+    function adjustStock(index, delta) {
+      inventory[index].inStock = Math.max(0, Math.round((inventory[index].inStock + delta) * 100) / 100);
+      saveData();
+      renderAll();
+    }
+
+    function checkMealReadiness(recipe) {
+      const state = plannerState[recipe.id] || { targetServings: recipe.baseServings };
+      const scale = state.targetServings / recipe.baseServings;
+
+      for (let ing of recipe.ingredients) {
+        const invItem = inventory.find(i => i.name.toLowerCase() === ing.name.toLowerCase());
+        const needed = ing.qty * scale;
+        if (!invItem || invItem.inStock < needed) return false;
+      }
+      return true;
+    }
+
+    function calculateNetShopping() {
+      const grossDemand = {};
+
+      recipes.forEach(r => {
+        const state = plannerState[r.id];
+        if (state && state.selected) {
+          const scale = state.targetServings / r.baseServings;
+          r.ingredients.forEach(ing => {
+            const key = ing.name.toLowerCase();
+            if (!grossDemand[key]) {
+              grossDemand[key] = { displayName: ing.name, totalNeeded: 0, unit: ing.unit };
+            }
+            grossDemand[key].totalNeeded += (ing.qty * scale);
+          });
+        }
+      });
+
+      const netList = [];
+      Object.keys(grossDemand).forEach(key => {
+        const item = grossDemand[key];
+        const invItem = inventory.find(i => i.name.toLowerCase() === key);
+
+        const owned = invItem ? invItem.inStock : 0;
+        const deficit = Math.max(0, item.totalNeeded - owned);
+
+        let pkgs = 0;
+        let cost = 0;
+        if (deficit > 0 && invItem && invItem.pkgSize > 0) {
+          pkgs = Math.ceil(deficit / invItem.pkgSize);
+          cost = pkgs * invItem.price;
+        }
+
+        netList.push({
+          name: item.displayName,
+          needed: item.totalNeeded,
+          owned,
+          deficit,
+          unit: item.unit,
+          pkgs,
+          cost
+        });
+      });
+
+      return netList;
+    }
+
+    function deductSelectedMeals() {
+      let count = 0;
+      recipes.forEach(r => {
+        const state = plannerState[r.id];
+        if (state && state.selected) {
+          const scale = state.targetServings / r.baseServings;
+          r.ingredients.forEach(ing => {
+            const invItem = inventory.find(i => i.name.toLowerCase() === ing.name.toLowerCase());
+            if (invItem) {
+              invItem.inStock = Math.max(0, Math.round((invItem.inStock - (ing.qty * scale)) * 100) / 100);
+            }
+          });
+          count++;
+        }
+      });
+
+      if (count > 0) {
+        saveData();
+        renderAll();
+        alert("Cooked meals deducted from shelves!");
+      }
+    }
+
+    function generatePantryRaidPrompt() {
+      const availableItems = inventory.filter(i => i.inStock > 0).map(i => `${i.name} (${i.inStock} ${i.unit})`).join(', ');
+      
+      const promptText = `I need to stretch my family's meals for the next 14 days without buying extra groceries.
+
+Here is my exact remaining inventory:
+${availableItems}
+
+Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bakes, grain bowls, or pan meals) using ONLY these ingredients. Format each idea with a title, required quantities, and brief cooking steps.`;
+
+      document.getElementById('synthesizer-output').value = promptText;
+    }
+
+    function copySynthesizerPrompt() {
+      const textarea = document.getElementById('synthesizer-output');
+      textarea.select();
+      document.execCommand('copy');
+      alert("Prompt copied to clipboard!");
+    }
+
+    // --- RENDER FUNCTIONS ---
+    function renderAll() {
+      renderInventoryGrid();
+      renderPlannerList();
+      renderNetShopping();
+      renderRecipeLibrary();
+    }
+
+    function renderInventoryGrid() {
+      const container = document.getElementById('inventory-grid');
+      container.innerHTML = '';
+
+      inventory.forEach((item, index) => {
+        if (activeContainerFilter !== 'All' && item.zone !== activeContainerFilter) return;
+
+        const zoneIcons = { Jars: '🏺', Cans: '🥫', Boxes: '📦', Bags: '🛍️', Fridge: '🧀', Freezer: '❄️' };
+        
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl p-4 border border-stone-200 shadow-sm flex flex-col justify-between space-y-3";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start">
+              <span class="text-xs font-bold bg-stone-100 text-stone-700 px-2.5 py-0.5 rounded-full">${zoneIcons[item.zone] || '📦'} ${item.zone}</span>
+              <button onclick="deleteInventoryItem(${index})" class="text-stone-300 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            <h3 class="font-bold text-stone-900 text-base mt-2">${item.name}</h3>
+            <p class="text-xs text-stone-500">In Stock: <span class="font-black text-stone-800 text-sm">${item.inStock} ${item.unit}</span></p>
+          </div>
+          <div class="flex items-center justify-between border-t border-stone-100 pt-2">
+            <span class="text-[11px] text-stone-400 font-medium">$${item.price.toFixed(2)} / ${item.pkgSize} ${item.unit}</span>
+            <div class="flex gap-1">
+              <button onclick="adjustStock(${index}, -1)" class="w-8 h-8 bg-stone-100 hover:bg-stone-200 rounded-lg font-black text-stone-700 text-sm flex items-center justify-center">-</button>
+              <button onclick="adjustStock(${index}, 1)" class="w-8 h-8 bg-amber-500 hover:bg-amber-600 text-stone-950 rounded-lg font-black text-sm flex items-center justify-center">+</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderPlannerList() {
+      const container = document.getElementById('planner-recipe-list');
+      container.innerHTML = '';
+      let readyCount = 0;
+
+      recipes.forEach(r => {
+        const isReady = checkMealReadiness(r);
+        if (isReady) readyCount++;
+
+        const state = plannerState[r.id] || { selected: false, targetServings: r.baseServings };
+
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-xl border transition-all ${isReady ? 'bg-emerald-50/60 border-emerald-200' : 'bg-stone-50 border-stone-200'}`;
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <label class="flex items-center gap-2 cursor-pointer font-bold text-xs text-stone-800">
+              <input type="checkbox" ${state.selected ? 'checked' : ''} onchange="togglePlannerRecipe('${r.id}', this.checked)" class="w-4 h-4 rounded text-amber-600">
+              <span>${r.name}</span>
+            </label>
+            ${isReady ? '<span class="text-[10px] font-black bg-emerald-600 text-white px-2 py-0.5 rounded-full uppercase">$0 Ready</span>' : '<span class="text-[10px] font-bold bg-stone-200 text-stone-600 px-2 py-0.5 rounded-full">Needs Stock</span>'}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('ready-count-badge').textContent = `${readyCount} $0 Ready`;
+    }
+
+    function renderNetShopping() {
+      const list = calculateNetShopping();
+      const container = document.getElementById('net-shopping-container');
+      const totalEl = document.getElementById('total-shopping-cost');
+
+      container.innerHTML = '';
+      let grandCost = 0;
+
+      list.forEach(item => {
+        grandCost += item.cost;
+        const div = document.createElement('div');
+        div.className = "flex justify-between items-center p-3 rounded-xl bg-stone-50 border border-stone-100 text-xs";
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-stone-800">${item.name}</div>
+            <div class="text-[11px] text-stone-500">Needed: ${item.needed} ${item.unit} | On Hand: ${item.owned} | Deficit: <span class="font-bold text-amber-700">${item.deficit} ${item.unit}</span></div>
+          </div>
+          <div class="font-black text-stone-900 text-sm">$${item.cost.toFixed(2)}</div>
+        `;
+        container.appendChild(div);
+      });
+
+      totalEl.textContent = `$${grandCost.toFixed(2)}`;
+    }
+
+    function renderRecipeLibrary() {
+      const container = document.getElementById('recipe-library-grid');
+      container.innerHTML = '';
+      recipes.forEach(r => {
+        const div = document.createElement('div');
+        div.className = "bg-stone-50 border border-stone-200 p-4 rounded-xl space-y-2";
+        div.innerHTML = `<h3 class="font-bold text-stone-900">${r.name}</h3><p class="text-xs text-stone-500">${r.ingredients.length} Ingredients | Base Servings: ${r.baseServings}</p>`;
+        container.appendChild(div);
+      });
+    }
+
+    // --- NAVIGATION & UTILS ---
+    function switchTab(tab) {
+      ['inventory', 'planner', 'synthesizer', 'recipes'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
+        document.getElementById(`nav-${t}`).className = "px-3 py-2 rounded-lg transition-all text-amber-200 hover:text-white";
+      });
+      document.getElementById(`tab-${tab}`).classList.remove('hidden');
+      document.getElementById(`nav-${tab}`).className = "px-3 py-2 rounded-lg transition-all bg-amber-600 text-stone-950 shadow";
+    }
+
+    function filterContainer(zone) {
+      activeContainerFilter = zone;
+      ['All', 'Jars', 'Cans', 'Boxes', 'Bags', 'Fridge', 'Freezer'].forEach(z => {
+        const btn = document.getElementById(`btn-filter-${z}`);
+        if (btn) btn.className = z === zone ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-900 text-amber-400" : "px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200";
+      });
+      renderInventoryGrid();
+    }
+
+    function togglePlannerRecipe(id, checked) {
+      plannerState[id].selected = checked;
+      renderPlannerList();
+      renderNetShopping();
+    }
+
+    function deleteInventoryItem(idx) {
+      inventory.splice(idx, 1);
+      saveData();
+      renderAll();
+    }
+
+    function openCustomItemModal() { document.getElementById('item-modal').classList.remove('hidden'); }
+    function closeCustomItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
+
+    function handleSaveCustomItem(e) {
+      e.preventDefault();
+      const item = {
+        name: document.getElementById('modal-name').value.trim(),
+        zone: document.getElementById('modal-zone').value,
+        inStock: parseFloat(document.getElementById('modal-stock').value) || 1,
+        unit: document.getElementById('modal-unit').value.trim(),
+        pkgSize: parseFloat(document.getElementById('modal-pkg-size').value) || 1,
+        price: parseFloat(document.getElementById('modal-price').value) || 1.99
+      };
+      inventory.push(item);
+      saveData();
+      closeCustomItemModal();
+      renderAll();
+    }
+
+    document.addEventListener('DOMContentLoaded', initData);
+  </script>
+</body>
+</html>
