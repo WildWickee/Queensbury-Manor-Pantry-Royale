@@ -1,209 +1,960 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-slate-100">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pantry Inventory</title>
+  <title>Queensbury Manor: Food & Inventory Commander</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    [x-cloak] { display: none !important; }
+  </style>
 </head>
-<body class="bg-slate-100 text-slate-900 min-h-screen p-4 sm:p-6 font-sans">
+<body class="h-full flex flex-col font-sans text-slate-900 bg-slate-100 antialiased">
 
-  <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
-    
-    <!-- Header -->
-    <header class="bg-slate-900 text-white p-5 border-b border-slate-800 flex justify-between items-center">
-      <div>
-        <h1 class="text-2xl font-bold tracking-tight">Pantry Inventory</h1>
-        <p class="text-slate-400 text-sm">Quick log for items and quantities</p>
+  <!-- Header -->
+  <header class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="openWelcomeModal()">
+        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white text-xl font-black shadow">
+          <i class="fa-solid fa-boxes-packing"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight">Queensbury Manor</h1>
+          <p class="text-xs text-indigo-300 font-medium">14-Day Inventory & Food Planner</p>
+        </div>
       </div>
-      <div id="total-count" class="text-sm font-semibold bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
-        0 Items
-      </div>
-    </header>
 
-    <div class="p-5 space-y-6">
+      <!-- Tab Navigation -->
+      <nav class="flex flex-wrap gap-1 text-xs font-semibold">
+        <button id="nav-dashboard" onclick="switchTab('dashboard')" class="px-3 py-2 rounded-lg bg-indigo-600 text-white shadow">
+          <i class="fa-solid fa-gauge-high mr-1"></i> Dashboard
+        </button>
+        <button id="nav-inventory" onclick="switchTab('inventory')" class="px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">
+          <i class="fa-solid fa-boxes-stacked mr-1"></i> 1. Pantry Stock
+        </button>
+        <button id="nav-planner" onclick="switchTab('planner')" class="px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">
+          <i class="fa-solid fa-calendar-days mr-1"></i> 2. Meal Planner
+        </button>
+        <button id="nav-synthesizer" onclick="switchTab('synthesizer')" class="px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">
+          <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> 3. AI Ideas
+        </button>
+        <button id="nav-recipes" onclick="switchTab('recipes')" class="px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">
+          <i class="fa-solid fa-book-bookmark mr-1"></i> Recipes
+        </button>
+      </nav>
+    </div>
+  </header>
 
-      <!-- Fast Entry Form -->
-      <form id="inventory-form" class="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
-        <div class="sm:col-span-5">
-          <label for="item-name" class="block text-xs font-bold uppercase text-slate-600 mb-1">Item Name</label>
-          <input type="text" id="item-name" required placeholder="e.g. Black Beans, All-Purpose Flour" 
-            class="w-full text-base px-3 py-2.5 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-800 text-slate-900 font-medium placeholder-slate-400">
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+    <!-- TAB 0: DASHBOARD & GUIDED OVERVIEW -->
+    <section id="tab-dashboard" class="space-y-6">
+      
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-4">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-100">Active Operational Target</span>
+            <h2 class="text-xl font-black text-slate-900 mt-2">14-Day Zero-Budget Survival Plan</h2>
+          </div>
+          
+          <div class="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl">
+            <i class="fa-solid fa-cart-shopping text-emerald-400"></i>
+            <span class="font-bold text-sm text-emerald-400" id="dash-rupee-cost">$0.00 Store Cost</span>
+          </div>
         </div>
 
-        <div class="sm:col-span-3">
-          <label for="item-category" class="block text-xs font-bold uppercase text-slate-600 mb-1">Category</label>
-          <select id="item-category" 
-            class="w-full text-base px-3 py-2.5 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-800 text-slate-900 font-medium">
-            <option value="Canned Goods">Canned Goods</option>
-            <option value="Dry Goods & Pasta">Dry Goods & Pasta</option>
-            <option value="Baking">Baking</option>
-            <option value="Spices & Seasonings">Spices & Seasonings</option>
-            <option value="Oils & Condiments">Oils & Condiments</option>
-            <option value="Snacks">Snacks</option>
-            <option value="Other">Other</option>
-          </select>
+        <!-- Progress Tracker -->
+        <div class="space-y-2">
+          <div class="flex justify-between text-xs font-bold text-slate-700">
+            <span>Days Covered Using On-Hand Food:</span>
+            <span id="dash-heart-text" class="text-indigo-600">0 / 14 Days</span>
+          </div>
+
+          <div id="hearts-container" class="flex flex-wrap gap-2 text-rose-500 text-2xl py-1"></div>
         </div>
 
-        <div class="sm:col-span-2">
-          <label for="item-qty" class="block text-xs font-bold uppercase text-slate-600 mb-1">Qty</label>
-          <input type="number" id="item-qty" min="1" value="1" required 
-            class="w-full text-base px-3 py-2.5 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-800 text-slate-900 font-bold text-center">
-        </div>
+        <!-- Guided Banner -->
+        <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center text-lg shrink-0 mt-0.5">
+              <i class="fa-solid fa-compass"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-indigo-900 uppercase" id="dash-step-title">What to do next:</div>
+              <p id="dash-directive-text" class="text-sm font-semibold text-slate-800 mt-0.5">
+                "Step 1: Go to Pantry Stock and log your jars, cans, boxes, and bags."
+              </p>
+            </div>
+          </div>
 
-        <div class="sm:col-span-2 flex items-end">
-          <button type="submit" 
-            class="w-full text-base bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 px-4 rounded-md transition duration-150 shadow-sm active:bg-slate-950">
-            + Add
+          <button id="dash-action-btn" onclick="switchTab('inventory')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow transition">
+            Open Pantry Stock &rarr;
           </button>
         </div>
-      </form>
+      </div>
 
-      <!-- Search & Category Filters -->
-      <div class="flex flex-col sm:flex-row gap-3 justify-between items-center border-b border-slate-200 pb-4">
-        <input type="text" id="search-input" placeholder="Filter inventory..." 
-          class="w-full sm:w-64 text-sm px-3 py-2 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-800">
+      <!-- 3 Simple Step Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         
-        <div class="flex gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-          <select id="filter-category" class="text-sm px-3 py-2 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-800 text-slate-700">
-            <option value="All">All Categories</option>
-            <option value="Canned Goods">Canned Goods</option>
-            <option value="Dry Goods & Pasta">Dry Goods & Pasta</option>
-            <option value="Baking">Baking</option>
-            <option value="Spices & Seasonings">Spices & Seasonings</option>
-            <option value="Oils & Condiments">Oils & Condiments</option>
-            <option value="Snacks">Snacks</option>
-            <option value="Other">Other</option>
-          </select>
+        <div onclick="switchTab('inventory')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-400 cursor-pointer shadow-sm transition flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">STEP 1</span>
+              <span class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded" id="dash-inv-count">0 Items</span>
+            </div>
+            <h3 class="font-bold text-base text-slate-900 mb-1">1. Log Pantry Stock</h3>
+            <p class="text-xs text-slate-500">Scan or type your jar, can, box, and bag counts using fast AI entry.</p>
+          </div>
+          <button class="w-full py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl uppercase">Start Step 1 &rarr;</button>
+        </div>
+
+        <div onclick="switchTab('planner')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-400 cursor-pointer shadow-sm transition flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">STEP 2</span>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded" id="dash-ready-count">0 Ready</span>
+            </div>
+            <h3 class="font-bold text-base text-slate-900 mb-1">2. Lock In $0 Meals</h3>
+            <p class="text-xs text-slate-500">Pick recipes that cost $0.00 right now using items on your shelves.</p>
+          </div>
+          <button class="w-full py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl uppercase">Go to Step 2 &rarr;</button>
+        </div>
+
+        <div onclick="switchTab('synthesizer')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-purple-400 cursor-pointer shadow-sm transition flex flex-col justify-between space-y-4">
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">STEP 3</span>
+              <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">AI Help</span>
+            </div>
+            <h3 class="font-bold text-base text-slate-900 mb-1">3. AI Recipe Ideas</h3>
+            <p class="text-xs text-slate-500">Generate custom stretch meals out of random leftover items.</p>
+          </div>
+          <button class="w-full py-2 bg-purple-600 text-white font-bold text-xs rounded-xl uppercase">Go to Step 3 &rarr;</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 1: PANTRY STOCK (FULL OVERHAUL LOGGING) -->
+    <section id="tab-inventory" class="hidden space-y-6">
+      
+      <!-- Overhaul Entry Form -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+        <div class="flex justify-between items-center border-b pb-3">
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-cart-flatbed text-indigo-600"></i> Pantry Overhaul & Stock Entry
+          </h2>
+          <span class="text-xs font-semibold text-slate-500">Fast Item Logging</span>
+        </div>
+
+        <!-- Form Grid -->
+        <form id="overhaul-form" onsubmit="handleOverhaulSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div class="sm:col-span-4">
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Item Name</label>
+            <input type="text" id="ov-name" required placeholder="e.g. Black Beans, Penne, Peanut Butter" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-600">
+          </div>
+
+          <div class="sm:col-span-3">
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Shelf Zone</label>
+            <select id="ov-zone" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-600">
+              <option value="Jars">🏺 Jar Vault</option>
+              <option value="Cans">🥫 Can Citadel</option>
+              <option value="Boxes">📦 Box Bunker</option>
+              <option value="Bags">🛍️ Bag Depot</option>
+              <option value="Fridge">🧀 Fridge</option>
+              <option value="Freezer">❄️ Freezer</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Qty / Stock</label>
+            <input type="number" step="0.01" id="ov-qty" min="1" value="1" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-900 text-center outline-none focus:ring-2 focus:ring-indigo-600">
+          </div>
+
+          <div class="sm:col-span-3 flex items-end">
+            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-lg text-xs uppercase tracking-wider transition shadow">
+              + Log to Shelf
+            </button>
+          </div>
+        </form>
+
+        <!-- Smart Quick-Add Bar -->
+        <div class="pt-2">
+          <div class="text-xs font-bold text-slate-600 uppercase mb-1">Or Auto-Add via Smart Detector:</div>
+          <div class="flex gap-2">
+            <input type="text" id="quick-add-input" placeholder="Type item name (e.g. 'peanut butter')..." class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600">
+            <button onclick="handleSmartQuickAdd()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs uppercase transition shadow">
+              Auto-Add
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Inventory List -->
-      <div class="overflow-hidden border border-slate-200 rounded-lg">
-        <ul id="inventory-list" class="divide-y divide-slate-200 bg-white">
-          <!-- Items render here -->
-        </ul>
+      <!-- Shelf Zone Filters -->
+      <div class="flex flex-wrap gap-2 justify-between items-center border-b border-slate-200 pb-3">
+        <div class="flex flex-wrap gap-1 text-xs font-bold">
+          <button onclick="filterContainer('All')" id="btn-filter-All" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white">All Shelves</button>
+          <button onclick="filterContainer('Jars')" id="btn-filter-Jars" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🏺 Jars</button>
+          <button onclick="filterContainer('Cans')" id="btn-filter-Cans" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🥫 Cans</button>
+          <button onclick="filterContainer('Boxes')" id="btn-filter-Boxes" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">📦 Boxes</button>
+          <button onclick="filterContainer('Bags')" id="btn-filter-Bags" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🛍️ Bags</button>
+          <button onclick="filterContainer('Fridge')" id="btn-filter-Fridge" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🧀 Fridge</button>
+          <button onclick="filterContainer('Freezer')" id="btn-filter-Freezer" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">❄️ Freezer</button>
+        </div>
+        <button onclick="openCustomItemModal()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+          + Full Manual Item Config
+        </button>
       </div>
 
+      <div id="inventory-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- TAB 2: MEAL PLANNER (WITH DEDUCT ENGINE) -->
+    <section id="tab-planner" class="hidden space-y-6">
+      
+      <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-xs font-semibold text-slate-800 flex justify-between items-center">
+        <span>STEP 2: Check off meals with a green "$0 READY" badge. Click below to deduct ingredients as you cook!</span>
+        <button onclick="switchTab('synthesizer')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs">NEXT: STEP 3 &rarr;</button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+          <div class="flex justify-between items-center border-b pb-2">
+            <h2 class="font-bold text-sm text-slate-900 uppercase">Meal Options</h2>
+            <span id="ready-count-badge" class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">0 Ready</span>
+          </div>
+
+          <div id="planner-recipe-list" class="space-y-2 max-h-[400px] overflow-y-auto pr-1"></div>
+
+          <button onclick="deductSelectedMeals()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow">
+            Cook Meals (Deduct from Stock)
+          </button>
+        </div>
+
+        <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+          <div class="flex justify-between items-center border-b pb-3">
+            <div>
+              <h2 class="font-bold text-sm text-slate-900 uppercase">Missing Ingredients (To Buy)</h2>
+              <p class="text-xs text-slate-500">Only shows items you don't own yet for selected meals.</p>
+            </div>
+            <span id="total-shopping-cost" class="font-black text-base text-emerald-600">$0.00</span>
+          </div>
+
+          <div id="net-shopping-container" class="space-y-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: AI RECIPE PROMPT SYNTHESIZER -->
+    <section id="tab-synthesizer" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+        <div>
+          <h2 class="font-bold text-base text-slate-900 uppercase">STEP 3: AI Recipe Prompt Generator</h2>
+          <p class="text-xs text-slate-500 mt-1">Generates a copyable prompt listing your exact remaining food for ChatGPT or Gemini!</p>
+        </div>
+
+        <button onclick="generatePantryRaidPrompt()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-3 rounded-xl text-xs uppercase tracking-wider shadow transition">
+          Generate Prompt Now
+        </button>
+
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-slate-700 uppercase">Copy this text into ChatGPT or Gemini:</label>
+          <textarea id="synthesizer-output" rows="8" readonly class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs text-slate-800 outline-none"></textarea>
+        </div>
+
+        <button onclick="copySynthesizerPrompt()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase shadow">
+          Copy to Clipboard
+        </button>
+      </div>
+    </section>
+
+    <!-- TAB 4: RECIPE LIBRARY -->
+    <section id="tab-recipes" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+        <div class="flex justify-between items-center border-b pb-3">
+          <h2 class="font-bold text-base text-slate-900 uppercase">Recipe Library</h2>
+          <button onclick="openCustomRecipeModal()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">+ Add New Recipe</button>
+        </div>
+        <div id="recipe-library-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PAGE LOAD ACTION POP-UP MODAL -->
+  <div id="welcome-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-5 border border-slate-200">
+      <div class="border-b pb-3">
+        <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider block">Queensbury Manor Command</span>
+        <h2 class="text-lg font-black text-slate-900 mt-1 uppercase">What do you want to do today?</h2>
+      </div>
+
+      <div class="space-y-2.5">
+        
+        <button onclick="handleGuidedAction('inventory')" class="w-full p-3.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl text-left flex items-center gap-3 transition group">
+          <div class="w-10 h-10 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-lg shrink-0">
+            <i class="fa-solid fa-boxes-stacked"></i>
+          </div>
+          <div>
+            <div class="font-bold text-sm text-slate-900">1. Log / Stock Pantry Inventory</div>
+            <div class="text-xs text-slate-500">Scan Jars, Cans, Boxes, and Bags using fast entry.</div>
+          </div>
+        </button>
+
+        <button onclick="handleGuidedAction('planner')" class="w-full p-3.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-left flex items-center gap-3 transition group">
+          <div class="w-10 h-10 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-lg shrink-0">
+            <i class="fa-solid fa-calendar-check"></i>
+          </div>
+          <div>
+            <div class="font-bold text-sm text-slate-900">2. Plan Meals ($0 On-Hand Food)</div>
+            <div class="text-xs text-slate-500">Pick $0.00 meals & deduct food as you cook.</div>
+          </div>
+        </button>
+
+        <button onclick="handleGuidedAction('synthesizer')" class="w-full p-3.5 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl text-left flex items-center gap-3 transition group">
+          <div class="w-10 h-10 bg-purple-600 text-white rounded-lg flex items-center justify-center text-lg shrink-0">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <div>
+            <div class="font-bold text-sm text-slate-900">3. Get AI Ideas for Leftover Food</div>
+            <div class="text-xs text-slate-500">Synthesize recipe prompts for remaining random food.</div>
+          </div>
+        </button>
+
+        <button onclick="handleGuidedAction('add-recipe')" class="w-full p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left flex items-center gap-3 transition group">
+          <div class="w-10 h-10 bg-slate-800 text-white rounded-lg flex items-center justify-center text-lg shrink-0">
+            <i class="fa-solid fa-plus-circle"></i>
+          </div>
+          <div>
+            <div class="font-bold text-sm text-slate-900">4. Add a New Recipe to Library</div>
+            <div class="text-xs text-slate-500">Create custom family recipes with ingredients.</div>
+          </div>
+        </button>
+
+      </div>
+
+      <div class="border-t pt-3 flex justify-between items-center">
+        <span class="text-xs text-slate-500">Choose an option to jump right in!</span>
+        <button onclick="closeWelcomeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition">Just Explore</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Custom Item Modal -->
+  <div id="item-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl space-y-4 border border-slate-200">
+      <h3 class="font-bold text-base text-slate-900 uppercase border-b pb-2">Add Item Manually</h3>
+      <form id="item-form" onsubmit="handleSaveCustomItem(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Item Name</label>
+          <input type="text" id="modal-name" required placeholder="e.g. Salsa" class="w-full px-3 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-600">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Shelf Zone</label>
+            <select id="modal-zone" class="w-full px-2 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+              <option value="Jars">🏺 Jars</option>
+              <option value="Cans">🥫 Cans</option>
+              <option value="Boxes">📦 Boxes</option>
+              <option value="Bags">🛍️ Bags</option>
+              <option value="Fridge">🧀 Fridge</option>
+              <option value="Freezer">❄️ Freezer</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Unit</label>
+            <input type="text" id="modal-unit" required placeholder="can, oz" class="w-full px-3 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">In Stock</label>
+            <input type="number" step="0.01" id="modal-stock" value="1" required class="w-full px-2 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Pkg Size</label>
+            <input type="number" step="0.01" id="modal-pkg-size" value="1" required class="w-full px-2 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Price ($)</label>
+            <input type="number" step="0.01" id="modal-price" value="1.99" required class="w-full px-2 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t">
+          <button type="button" onclick="closeCustomItemModal()" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold text-xs rounded-lg">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Recipe Modal -->
+  <div id="recipe-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl space-y-4 border border-slate-200">
+      <h3 class="font-bold text-base text-slate-900 uppercase border-b pb-2">Add New Recipe</h3>
+      <form id="recipe-form" onsubmit="handleSaveCustomRecipe(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Recipe Name</label>
+          <input type="text" id="recipe-modal-name" required placeholder="e.g. Chili Casserole" class="w-full px-3 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-600">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Base Servings</label>
+          <input type="number" id="recipe-modal-servings" value="4" min="1" required class="w-full px-3 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+        </div>
+        <div class="space-y-2 border-t pt-2">
+          <label class="block text-xs font-bold text-slate-600">Ingredients Required</label>
+          <div id="recipe-ingredient-rows" class="space-y-2"></div>
+          <button type="button" onclick="addRecipeIngredientRow()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">+ Add Ingredient Row</button>
+        </div>
+        <div class="flex justify-end gap-2 pt-2 border-t">
+          <button type="button" onclick="closeCustomRecipeModal()" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold text-xs rounded-lg">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg">Save Recipe</button>
+        </div>
+      </form>
     </div>
   </div>
 
   <script>
-    let inventory = JSON.parse(localStorage.getItem('pantry_inventory')) || [];
+    const AUTO_RULES = [
+      { keywords: ['peanut butter', 'jam', 'jelly', 'salsa', 'marinara', 'sauce', 'mayo', 'pickles', 'dressing', 'syrup', 'oil'], zone: 'Jars', unit: 'oz', pkgSize: 16, price: 2.99 },
+      { keywords: ['beans', 'black beans', 'chickpeas', 'tomatoes', 'diced tomatoes', 'soup', 'tuna', 'corn', 'coconut milk'], zone: 'Cans', unit: 'can', pkgSize: 1, price: 0.99 },
+      { keywords: ['pasta', 'penne', 'spaghetti', 'rice', 'cereal', 'mac', 'macaroni', 'oats', 'pancake', 'stuffing', 'mix'], zone: 'Boxes', unit: 'oz', pkgSize: 16, price: 1.49 },
+      { keywords: ['flour', 'sugar', 'chips', 'tortillas', 'nuts', 'pretzels', 'popcorn', 'snack'], zone: 'Bags', unit: 'oz', pkgSize: 16, price: 2.49 },
+      { keywords: ['milk', 'cheese', 'butter', 'eggs', 'yogurt', 'sour cream', 'carrots', 'peppers', 'lettuce'], zone: 'Fridge', unit: 'item', pkgSize: 1, price: 2.99 },
+      { keywords: ['chicken', 'beef', 'pork', 'ground beef', 'peas', 'frozen', 'waffles'], zone: 'Freezer', unit: 'oz', pkgSize: 16, price: 4.99 }
+    ];
 
-    const form = document.getElementById('inventory-form');
-    const nameInput = document.getElementById('item-name');
-    const categoryInput = document.getElementById('item-category');
-    const qtyInput = document.getElementById('item-qty');
-    const list = document.getElementById('inventory-list');
-    const searchInput = document.getElementById('search-input');
-    const filterCategory = document.getElementById('filter-category');
-    const totalCount = document.getElementById('total-count');
+    const DEFAULT_INVENTORY = [
+      { name: "Peanut Butter", zone: "Jars", inStock: 2, unit: "oz", pkgSize: 16, price: 2.99 },
+      { name: "Black Beans", zone: "Cans", inStock: 4, unit: "can", pkgSize: 1, price: 0.99 },
+      { name: "Penne Pasta", zone: "Boxes", inStock: 32, unit: "oz", pkgSize: 16, price: 1.49 },
+      { name: "All Purpose Flour", zone: "Bags", inStock: 64, unit: "oz", pkgSize: 16, price: 2.49 },
+      { name: "Chicken Breast", zone: "Freezer", inStock: 32, unit: "oz", pkgSize: 16, price: 4.99 },
+      { name: "Cheddar Cheese", zone: "Fridge", inStock: 8, unit: "oz", pkgSize: 8, price: 2.99 }
+    ];
 
-    function saveAndRender() {
-      localStorage.setItem('pantry_inventory', JSON.stringify(inventory));
-      render();
-    }
-
-    function render() {
-      const query = searchInput.value.toLowerCase();
-      const catFilter = filterCategory.value;
-
-      list.innerHTML = '';
-
-      const filtered = inventory.filter(item => {
-        const matchesSearch = item.name.toLowerCase().includes(query);
-        const matchesCategory = catFilter === 'All' || item.category === catFilter;
-        return matchesSearch && matchesCategory;
-      });
-
-      totalCount.textContent = `${inventory.length} Unique ${inventory.length === 1 ? 'Item' : 'Items'}`;
-
-      if (filtered.length === 0) {
-        list.innerHTML = `<li class="p-8 text-center text-slate-500 text-base font-medium">No items found.</li>`;
-        return;
+    const DEFAULT_RECIPES = [
+      {
+        id: "rec-1",
+        name: "Pantry Black Bean & Pasta Skillet",
+        baseServings: 4,
+        ingredients: [
+          { name: "Black Beans", qty: 2, unit: "can" },
+          { name: "Penne Pasta", qty: 12, unit: "oz" },
+          { name: "Cheddar Cheese", qty: 4, unit: "oz" }
+        ]
+      },
+      {
+        id: "rec-2",
+        name: "Garlic Chicken Breast & Rice",
+        baseServings: 4,
+        ingredients: [
+          { name: "Chicken Breast", qty: 16, unit: "oz" },
+          { name: "Penne Pasta", qty: 8, unit: "oz" }
+        ]
       }
+    ];
 
-      filtered.forEach((item) => {
-        const li = document.createElement('li');
-        li.className = 'p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50 transition';
+    let inventory = [];
+    let recipes = [];
+    let plannerState = {};
+    let activeContainerFilter = 'All';
 
-        li.innerHTML = `
-          <div class="flex-1">
-            <span class="text-lg font-bold text-slate-900 block leading-snug">${escapeHtml(item.name)}</span>
-            <span class="inline-block mt-1 text-xs font-semibold uppercase tracking-wider text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">${escapeHtml(item.category)}</span>
-          </div>
+    function initData() {
+      const storedInv = localStorage.getItem('qm_inventory');
+      const storedRec = localStorage.getItem('qm_recipes');
 
-          <div class="flex items-center gap-4 justify-between sm:justify-end">
-            <div class="flex items-center border border-slate-300 rounded-md bg-white overflow-hidden shadow-sm">
-              <button onclick="updateQty('${item.id}', -1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-lg active:bg-slate-300 transition">-</button>
-              <span class="px-4 py-1.5 font-bold text-slate-900 text-base min-w-[2.5rem] text-center">${item.qty}</span>
-              <button onclick="updateQty('${item.id}', 1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-lg active:bg-slate-300 transition">+</button>
-            </div>
+      inventory = storedInv ? JSON.parse(storedInv) : DEFAULT_INVENTORY;
+      recipes = storedRec ? JSON.parse(storedRec) : DEFAULT_RECIPES;
 
-            <button onclick="removeItem('${item.id}')" class="text-rose-600 hover:text-rose-800 font-semibold text-sm px-2 py-1 rounded hover:bg-rose-50 transition">
-              Delete
-            </button>
-          </div>
-        `;
-        list.appendChild(li);
+      recipes.forEach(r => {
+        plannerState[r.id] = { selected: false, targetServings: r.baseServings };
       });
+
+      saveData();
+      renderAll();
     }
 
-    form.addEventListener('submit', (e) => {
+    function saveData() {
+      localStorage.setItem('qm_inventory', JSON.stringify(inventory));
+      localStorage.setItem('qm_recipes', JSON.stringify(recipes));
+    }
+
+    function handleGuidedAction(action) {
+      closeWelcomeModal();
+      if (action === 'add-recipe') {
+        switchTab('recipes');
+        openCustomRecipeModal();
+      } else {
+        switchTab(action);
+      }
+    }
+
+    function openWelcomeModal() { document.getElementById('welcome-modal').classList.remove('hidden'); }
+    function closeWelcomeModal() { document.getElementById('welcome-modal').classList.add('hidden'); }
+
+    function handleOverhaulSubmit(e) {
       e.preventDefault();
-      const name = nameInput.value.trim();
+      const name = document.getElementById('ov-name').value.trim();
+      const zone = document.getElementById('ov-zone').value;
+      const qty = parseFloat(document.getElementById('ov-qty').value) || 1;
+
       if (!name) return;
 
-      const existingIndex = inventory.findIndex(i => i.name.toLowerCase() === name.toLowerCase() && i.category === categoryInput.value);
+      const existingIdx = inventory.findIndex(i => i.name.toLowerCase() === name.toLowerCase() && i.zone === zone);
 
-      if (existingIndex > -1) {
-        inventory[existingIndex].qty += parseInt(qtyInput.value, 10);
+      if (existingIdx >= 0) {
+        inventory[existingIdx].inStock += qty;
       } else {
         inventory.push({
-          id: Date.now().toString(),
           name: name,
-          category: categoryInput.value,
-          qty: parseInt(qtyInput.value, 10)
+          zone: zone,
+          inStock: qty,
+          unit: zone === 'Cans' ? 'can' : 'oz',
+          pkgSize: 1,
+          price: 1.99
         });
       }
 
-      nameInput.value = '';
-      qtyInput.value = '1';
-      nameInput.focus();
-      saveAndRender();
-    });
-
-    window.updateQty = function(id, delta) {
-      const item = inventory.find(i => i.id === id);
-      if (!item) return;
-      item.qty += delta;
-      if (item.qty <= 0) {
-        removeItem(id);
-      } else {
-        saveAndRender();
-      }
-    };
-
-    window.removeItem = function(id) {
-      inventory = inventory.filter(i => i.id !== id);
-      saveAndRender();
-    };
-
-    function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, (m) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-      })[m]);
+      saveData();
+      renderAll();
+      document.getElementById('ov-name').value = '';
+      document.getElementById('ov-qty').value = '1';
+      document.getElementById('ov-name').focus();
     }
 
-    searchInput.addEventListener('input', render);
-    filterCategory.addEventListener('change', render);
+    function handleSmartQuickAdd() {
+      const inputEl = document.getElementById('quick-add-input');
+      const rawName = inputEl.value.trim();
+      if (!rawName) return;
 
-    render();
+      const lower = rawName.toLowerCase();
+      let matchedRule = AUTO_RULES.find(r => r.keywords.some(kw => lower.includes(kw)));
+
+      if (!matchedRule) {
+        matchedRule = { zone: 'Boxes', unit: 'oz', pkgSize: 16, price: 1.99 };
+      }
+
+      const existingIdx = inventory.findIndex(i => i.name.toLowerCase() === rawName.toLowerCase());
+
+      if (existingIdx >= 0) {
+        inventory[existingIdx].inStock += matchedRule.pkgSize;
+      } else {
+        inventory.push({
+          name: rawName,
+          zone: matchedRule.zone,
+          inStock: matchedRule.pkgSize,
+          unit: matchedRule.unit,
+          pkgSize: matchedRule.pkgSize,
+          price: matchedRule.price
+        });
+      }
+
+      saveData();
+      renderAll();
+      inputEl.value = '';
+    }
+
+    function adjustStock(index, delta) {
+      inventory[index].inStock = Math.max(0, Math.round((inventory[index].inStock + delta) * 100) / 100);
+      saveData();
+      renderAll();
+    }
+
+    function checkMealReadiness(recipe) {
+      const state = plannerState[recipe.id] || { targetServings: recipe.baseServings };
+      const scale = state.targetServings / recipe.baseServings;
+
+      for (let ing of recipe.ingredients) {
+        const invItem = inventory.find(i => i.name.toLowerCase() === ing.name.toLowerCase());
+        const needed = ing.qty * scale;
+        if (!invItem || invItem.inStock < needed) return false;
+      }
+      return true;
+    }
+
+    function calculateNetShopping() {
+      const grossDemand = {};
+
+      recipes.forEach(r => {
+        const state = plannerState[r.id];
+        if (state && state.selected) {
+          const scale = state.targetServings / r.baseServings;
+          r.ingredients.forEach(ing => {
+            const key = ing.name.toLowerCase();
+            if (!grossDemand[key]) {
+              grossDemand[key] = { displayName: ing.name, totalNeeded: 0, unit: ing.unit };
+            }
+            grossDemand[key].totalNeeded += (ing.qty * scale);
+          });
+        }
+      });
+
+      const netList = [];
+      Object.keys(grossDemand).forEach(key => {
+        const item = grossDemand[key];
+        const invItem = inventory.find(i => i.name.toLowerCase() === key);
+
+        const owned = invItem ? invItem.inStock : 0;
+        const deficit = Math.max(0, item.totalNeeded - owned);
+
+        let pkgs = 0;
+        let cost = 0;
+        if (deficit > 0 && invItem && invItem.pkgSize > 0) {
+          pkgs = Math.ceil(deficit / invItem.pkgSize);
+          cost = pkgs * invItem.price;
+        }
+
+        netList.push({
+          name: item.displayName,
+          needed: item.totalNeeded,
+          owned,
+          deficit,
+          unit: item.unit,
+          pkgs,
+          cost
+        });
+      });
+
+      return netList;
+    }
+
+    function deductSelectedMeals() {
+      let count = 0;
+      let deductedLog = [];
+
+      recipes.forEach(r => {
+        const state = plannerState[r.id];
+        if (state && state.selected) {
+          const scale = state.targetServings / r.baseServings;
+          r.ingredients.forEach(ing => {
+            const invItem = inventory.find(i => i.name.toLowerCase() === ing.name.toLowerCase());
+            if (invItem) {
+              const amountUsed = ing.qty * scale;
+              invItem.inStock = Math.max(0, Math.round((invItem.inStock - amountUsed) * 100) / 100);
+              deductedLog.push(`${ing.name}: -${amountUsed} ${ing.unit}`);
+            }
+          });
+          count++;
+          plannerState[r.id].selected = false;
+        }
+      });
+
+      if (count > 0) {
+        saveData();
+        renderAll();
+        alert(`Cooked ${count} meal(s)!\n\nIngredients Deducted from Stock:\n` + deductedLog.join('\n'));
+      } else {
+        alert("Select at least one meal in the planner first!");
+      }
+    }
+
+    function generatePantryRaidPrompt() {
+      const availableItems = inventory.filter(i => i.inStock > 0).map(i => `${i.name} (${i.inStock} ${i.unit})`).join(', ');
+      
+      const promptText = `I need to stretch my family's meals for the next 14 days without buying extra groceries.
+
+Here is my exact remaining inventory:
+${availableItems}
+
+Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bakes, grain bowls, or pan meals) using ONLY these ingredients. Format each idea with a title, required quantities, and brief cooking steps.`;
+
+      document.getElementById('synthesizer-output').value = promptText;
+    }
+
+    function copySynthesizerPrompt() {
+      const textarea = document.getElementById('synthesizer-output');
+      textarea.select();
+      document.execCommand('copy');
+      alert("Prompt copied to clipboard!");
+    }
+
+    function renderAll() {
+      renderDashboard();
+      renderInventoryGrid();
+      renderPlannerList();
+      renderNetShopping();
+      renderRecipeLibrary();
+    }
+
+    function renderDashboard() {
+      let selectedMealsCount = 0;
+      recipes.forEach(r => {
+        if (plannerState[r.id] && plannerState[r.id].selected) selectedMealsCount++;
+      });
+
+      const fundedDays = Math.min(14, selectedMealsCount);
+      document.getElementById('dash-heart-text').textContent = `${fundedDays} / 14 Days Covered`;
+
+      const heartsContainer = document.getElementById('hearts-container');
+      heartsContainer.innerHTML = '';
+
+      for (let i = 1; i <= 14; i++) {
+        const heart = document.createElement('i');
+        if (i <= fundedDays) {
+          heart.className = "fa-solid fa-heart text-rose-500 drop-shadow-sm";
+        } else {
+          heart.className = "fa-regular fa-heart text-slate-300";
+        }
+        heartsContainer.appendChild(heart);
+      }
+
+      document.getElementById('dash-inv-count').textContent = `${inventory.length} Items`;
+      
+      let readyCount = 0;
+      recipes.forEach(r => { if (checkMealReadiness(r)) readyCount++; });
+      document.getElementById('dash-ready-count').textContent = `${readyCount} Ready`;
+
+      const netList = calculateNetShopping();
+      let grandCost = 0;
+      netList.forEach(item => grandCost += item.cost);
+      document.getElementById('dash-rupee-cost').textContent = `$${grandCost.toFixed(2)} Store Cost`;
+
+      const stepTitleEl = document.getElementById('dash-step-title');
+      const directiveTextEl = document.getElementById('dash-directive-text');
+      const actionBtnEl = document.getElementById('dash-action-btn');
+
+      if (inventory.length < 3) {
+        stepTitleEl.textContent = "What to do next:";
+        directiveTextEl.textContent = '"Step 1: Go to Pantry Stock and log your jars, cans, boxes, and bags."';
+        actionBtnEl.textContent = "Open Pantry Stock ->";
+        actionBtnEl.onclick = function() { switchTab('inventory'); };
+      } else if (fundedDays < 7) {
+        stepTitleEl.textContent = "What to do next:";
+        directiveTextEl.textContent = '"Step 2: Go to Meal Planner and check off $0.00 meals to cover your 14 days!"';
+        actionBtnEl.textContent = "Open Meal Planner ->";
+        actionBtnEl.onclick = function() { switchTab('planner'); };
+      } else {
+        stepTitleEl.textContent = "What to do next:";
+        directiveTextEl.textContent = '"Step 3: Great progress! Use AI Recipe Generator for creative stretch ideas."';
+        actionBtnEl.textContent = "Open AI Generator ->";
+        actionBtnEl.onclick = function() { switchTab('synthesizer'); };
+      }
+    }
+
+    function renderInventoryGrid() {
+      const container = document.getElementById('inventory-grid');
+      container.innerHTML = '';
+
+      inventory.forEach((item, index) => {
+        if (activeContainerFilter !== 'All' && item.zone !== activeContainerFilter) return;
+
+        const zoneIcons = { Jars: '🏺', Cans: '🥫', Boxes: '📦', Bags: '🛍️', Fridge: '🧀', Freezer: '❄️' };
+        
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start">
+              <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">${zoneIcons[item.zone] || '📦'} ${item.zone}</span>
+              <button onclick="deleteInventoryItem(${index})" class="text-slate-400 hover:text-rose-600 text-xs"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            <h3 class="font-bold text-slate-900 text-base mt-2">${item.name}</h3>
+            <p class="text-xs text-slate-500 mt-1">In Stock: <span class="font-bold text-indigo-600 text-sm">${item.inStock} ${item.unit}</span></p>
+          </div>
+          <div class="flex items-center justify-between border-t border-slate-100 pt-2">
+            <span class="text-xs text-slate-400 font-medium">$${item.price.toFixed(2)} / ${item.pkgSize} ${item.unit}</span>
+            <div class="flex gap-1">
+              <button onclick="adjustStock(${index}, -1)" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-800 text-sm flex items-center justify-center">-</button>
+              <button onclick="adjustStock(${index}, 1)" class="w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm flex items-center justify-center shadow-sm">+</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderPlannerList() {
+      const container = document.getElementById('planner-recipe-list');
+      container.innerHTML = '';
+      let readyCount = 0;
+
+      recipes.forEach(r => {
+        const isReady = checkMealReadiness(r);
+        if (isReady) readyCount++;
+
+        const state = plannerState[r.id] || { selected: false, targetServings: r.baseServings };
+
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-xl border transition-all ${isReady ? 'bg-emerald-50 border-emerald-300' : 'bg-slate-50 border-slate-200'}`;
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <label class="flex items-center gap-2 cursor-pointer font-bold text-xs text-slate-800">
+              <input type="checkbox" ${state.selected ? 'checked' : ''} onchange="togglePlannerRecipe('${r.id}', this.checked)" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-600 border-slate-300">
+              <span>${r.name}</span>
+            </label>
+            ${isReady ? '<span class="text-[10px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-full">$0 READY</span>' : '<span class="text-[10px] font-semibold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">NEEDS STOCK</span>'}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('ready-count-badge').textContent = `${readyCount} Ready`;
+    }
+
+    function renderNetShopping() {
+      const list = calculateNetShopping();
+      const container = document.getElementById('net-shopping-container');
+      const totalEl = document.getElementById('total-shopping-cost');
+
+      container.innerHTML = '';
+      let grandCost = 0;
+
+      list.forEach(item => {
+        grandCost += item.cost;
+        const div = document.createElement('div');
+        div.className = "flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs";
+        div.innerHTML = `
+          <div>
+            <div class="font-bold text-slate-900">${item.name}</div>
+            <div class="text-slate-500 text-xs">Needed: ${item.needed} ${item.unit} | Deficit: <span class="font-bold text-amber-600">${item.deficit} ${item.unit}</span></div>
+          </div>
+          <div class="font-bold text-emerald-600 text-sm">$${item.cost.toFixed(2)}</div>
+        `;
+        container.appendChild(div);
+      });
+
+      totalEl.textContent = `$${grandCost.toFixed(2)}`;
+    }
+
+    function renderRecipeLibrary() {
+      const container = document.getElementById('recipe-library-grid');
+      container.innerHTML = '';
+      recipes.forEach((r, idx) => {
+        const div = document.createElement('div');
+        div.className = "bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-2 flex flex-col justify-between";
+        const ingNames = r.ingredients.map(i => i.name).join(', ');
+        div.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start">
+              <h3 class="font-bold text-slate-900 text-sm">${r.name}</h3>
+              <button onclick="deleteRecipe(${idx})" class="text-slate-400 hover:text-rose-600 text-xs"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            <p class="text-xs text-slate-500 mt-2">Ingredients: ${ingNames}</p>
+          </div>
+          <span class="text-xs font-bold text-indigo-600 border-t pt-2 block">${r.baseServings} Servings</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function switchTab(tab) {
+      ['dashboard', 'inventory', 'planner', 'synthesizer', 'recipes'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
+        const btn = document.getElementById(`nav-${t}`);
+        if (btn) btn.className = "px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800";
+      });
+
+      document.getElementById(`tab-${tab}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`nav-${tab}`);
+      if (activeBtn) activeBtn.className = "px-3 py-2 rounded-lg bg-indigo-600 text-white shadow";
+    }
+
+    function filterContainer(zone) {
+      activeContainerFilter = zone;
+      ['All', 'Jars', 'Cans', 'Boxes', 'Bags', 'Fridge', 'Freezer'].forEach(z => {
+        const btn = document.getElementById(`btn-filter-${z}`);
+        if (btn) btn.className = z === zone ? "px-3 py-1.5 rounded-lg bg-slate-900 text-white" : "px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50";
+      });
+      renderInventoryGrid();
+    }
+
+    function togglePlannerRecipe(id, checked) {
+      plannerState[id].selected = checked;
+      renderPlannerList();
+      renderNetShopping();
+      renderDashboard();
+    }
+
+    function deleteInventoryItem(idx) {
+      inventory.splice(idx, 1);
+      saveData();
+      renderAll();
+    }
+
+    function deleteRecipe(idx) {
+      recipes.splice(idx, 1);
+      saveData();
+      renderAll();
+    }
+
+    function openCustomItemModal() { document.getElementById('item-modal').classList.remove('hidden'); }
+    function closeCustomItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
+
+    function handleSaveCustomItem(e) {
+      e.preventDefault();
+      const item = {
+        name: document.getElementById('modal-name').value.trim(),
+        zone: document.getElementById('modal-zone').value,
+        inStock: parseFloat(document.getElementById('modal-stock').value) || 1,
+        unit: document.getElementById('modal-unit').value.trim(),
+        pkgSize: parseFloat(document.getElementById('modal-pkg-size').value) || 1,
+        price: parseFloat(document.getElementById('modal-price').value) || 1.99
+      };
+      inventory.push(item);
+      saveData();
+      closeCustomItemModal();
+      renderAll();
+    }
+
+    function openCustomRecipeModal() {
+      document.getElementById('recipe-form').reset();
+      document.getElementById('recipe-ingredient-rows').innerHTML = '';
+      addRecipeIngredientRow();
+      document.getElementById('recipe-modal').classList.remove('hidden');
+    }
+
+    function closeCustomRecipeModal() { document.getElementById('recipe-modal').classList.add('hidden'); }
+
+    function addRecipeIngredientRow() {
+      const container = document.getElementById('recipe-ingredient-rows');
+      const div = document.createElement('div');
+      div.className = "flex gap-2 items-center recipe-ing-row";
+      div.innerHTML = `
+        <input type="text" placeholder="Ingredient Name" class="ing-name flex-1 px-2 py-1 bg-slate-50 border rounded text-xs outline-none">
+        <input type="number" step="0.01" placeholder="Qty" class="ing-qty w-16 px-2 py-1 bg-slate-50 border rounded text-xs outline-none">
+        <input type="text" placeholder="Unit" class="ing-unit w-16 px-2 py-1 bg-slate-50 border rounded text-xs outline-none">
+        <button type="button" onclick="this.parentElement.remove()" class="text-rose-600 font-bold px-1 text-xs">X</button>
+      `;
+      container.appendChild(div);
+    }
+
+    function handleSaveCustomRecipe(e) {
+      e.preventDefault();
+      const name = document.getElementById('recipe-modal-name').value.trim();
+      const servings = parseInt(document.getElementById('recipe-modal-servings').value) || 4;
+
+      const rows = document.querySelectorAll('.recipe-ing-row');
+      const ingredients = [];
+
+      rows.forEach(row => {
+        const ingName = row.querySelector('.ing-name').value.trim();
+        const ingQty = parseFloat(row.querySelector('.ing-qty').value) || 1;
+        const ingUnit = row.querySelector('.ing-unit').value.trim() || 'item';
+
+        if (ingName) {
+          ingredients.push({ name: ingName, qty: ingQty, unit: ingUnit });
+        }
+      });
+
+      if (ingredients.length === 0) {
+        alert("Please add at least one ingredient!");
+        return;
+      }
+
+      const newRec = { id: `rec-${Date.now()}`, name, baseServings: servings, ingredients };
+      recipes.push(newRec);
+      plannerState[newRec.id] = { selected: false, targetServings: servings };
+
+      saveData();
+      closeCustomRecipeModal();
+      renderAll();
+    }
+
+    document.addEventListener('DOMContentLoaded', initData);
   </script>
 </body>
 </html>
