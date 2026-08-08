@@ -1,84 +1,191 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-amber-50/50">
+<html lang="en" class="h-full bg-stone-950">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Queensbury Manor: Pantry Royale</title>
+  <title>Queensbury Manor: Pantry Quest</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Retro 8-Bit Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  
   <style>
     [x-cloak] { display: none !important; }
+    
+    .font-pixel { font-family: 'Press Start 2P', cursive; }
+    .font-vt { font-family: 'VT323', monospace; }
+
+    /* Retro NES Pixel Border Effects */
+    .nes-box {
+      border: 4px solid #f59e0b;
+      box-shadow: inset -4px -4px 0px #78350f, inset 4px 4px 0px #fef08a;
+    }
+    .nes-box-dark {
+      border: 4px solid #38240b;
+      background-color: #0c0a09;
+      box-shadow: inset -4px -4px 0px #1c1004, inset 4px 4px 0px #78350f;
+    }
+    .nes-btn {
+      border: 3px solid #000;
+      box-shadow: inset -3px -3px 0px rgba(0,0,0,0.4), inset 3px 3px 0px rgba(255,255,255,0.4);
+      image-rendering: pixelated;
+    }
+    .nes-btn:active {
+      box-shadow: inset 3px 3px 0px rgba(0,0,0,0.6);
+      transform: translateY(2px);
+    }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans text-slate-800 antialiased selection:bg-amber-200">
+<body class="h-full flex flex-col font-sans text-amber-100 bg-stone-950 antialiased selection:bg-amber-500 selection:text-stone-950">
 
-  <!-- Queensbury Manor Culinary Header -->
-  <header class="bg-stone-900 text-amber-100 shadow-xl border-b-4 border-amber-600">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <div class="flex items-center space-x-3">
-        <div class="w-12 h-12 bg-amber-600 rounded-2xl flex items-center justify-center text-stone-900 text-2xl font-black shadow-inner">
-          <i class="fa-solid fa-utensils"></i>
+  <!-- Queensbury Manor Top HUD -->
+  <header class="bg-stone-900 border-b-4 border-amber-600 p-3 sticky top-0 z-40 shadow-2xl">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+      
+      <!-- Quest Title -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+        <div class="w-10 h-10 bg-amber-500 border-2 border-amber-200 flex items-center justify-center text-stone-950 text-xl font-black shadow">
+          <i class="fa-solid fa-shield-cat"></i>
         </div>
         <div>
-          <h1 class="text-xl font-black tracking-wide text-white uppercase font-serif">Queensbury Manor</h1>
-          <p class="text-xs text-amber-400 font-medium">Pantry Royale & Zero-Budget Commander</p>
+          <h1 class="text-xs sm:text-sm font-pixel tracking-wider text-amber-400 uppercase">QUEENSBURY QUEST</h1>
+          <p class="text-[10px] font-pixel text-stone-400 mt-1">14-DAY PANTRY ROYALE</p>
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="flex flex-wrap gap-1 bg-stone-800/80 p-1.5 rounded-xl border border-stone-700 text-xs font-bold">
-        <button id="nav-inventory" onclick="switchTab('inventory')" class="px-3 py-2 rounded-lg transition-all bg-amber-600 text-stone-950 shadow">
-          <i class="fa-solid fa-boxes-stacked mr-1"></i> Shelf Inventory
+      <!-- Navigation Bar -->
+      <nav class="flex flex-wrap gap-1 font-pixel text-[9px]">
+        <button id="nav-dashboard" onclick="switchTab('dashboard')" class="nes-btn px-3 py-2 bg-amber-500 text-stone-950 font-bold">
+          <i class="fa-solid fa-compass mr-1"></i> QUEST HUB
         </button>
-        <button id="nav-planner" onclick="switchTab('planner')" class="px-3 py-2 rounded-lg transition-all text-amber-200 hover:text-white">
-          <i class="fa-solid fa-shield-halved mr-1"></i> $0 Quest Planner
+        <button id="nav-inventory" onclick="switchTab('inventory')" class="nes-btn px-3 py-2 bg-stone-800 text-amber-300 hover:bg-stone-700">
+          <i class="fa-solid fa-boxes-stacked mr-1"></i> LOOT
         </button>
-        <button id="nav-synthesizer" onclick="switchTab('synthesizer')" class="px-3 py-2 rounded-lg transition-all text-amber-200 hover:text-white">
-          <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Meal Synthesizer
+        <button id="nav-planner" onclick="switchTab('planner')" class="nes-btn px-3 py-2 bg-stone-800 text-amber-300 hover:bg-stone-700">
+          <i class="fa-solid fa-heart mr-1"></i> $0 LOG
         </button>
-        <button id="nav-recipes" onclick="switchTab('recipes')" class="px-3 py-2 rounded-lg transition-all text-amber-200 hover:text-white">
-          <i class="fa-solid fa-book-bookmark mr-1"></i> Recipe Library
+        <button id="nav-synthesizer" onclick="switchTab('synthesizer')" class="nes-btn px-3 py-2 bg-stone-800 text-amber-300 hover:bg-stone-700">
+          <i class="fa-solid fa-wand-sparkles mr-1"></i> ALCHEMY
         </button>
       </nav>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+  <!-- Main Quest Screen -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 space-y-6">
 
-    <!-- TAB 1: SHELF INVENTORY & SMART QUICK-ADD -->
-    <section id="tab-inventory" class="space-y-6">
+    <!-- TAB 0: QUEST DASHBOARD (DEFAULT VIEW) -->
+    <section id="tab-dashboard" class="space-y-6">
       
-      <!-- Smart AI Auto-Fill Quick Bar -->
-      <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-5 space-y-3">
-        <div class="flex items-center justify-between">
-          <h2 class="text-sm font-bold uppercase tracking-wider text-stone-700 flex items-center gap-2">
-            <i class="fa-solid fa-bolt text-amber-500"></i> Smart AI Stock Entry
-          </h2>
-          <span class="text-[11px] text-stone-400 font-medium">Auto-populates container zone & standard unit size</span>
+      <!-- Heart Container Health Bar -->
+      <div class="nes-box-dark p-5 rounded-none space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b-2 border-amber-900 pb-3">
+          <div>
+            <span class="text-[9px] font-pixel text-amber-500 uppercase tracking-widest">ACTIVE MISSION</span>
+            <h2 class="text-sm sm:text-base font-pixel text-white mt-1">14-DAY SURVIVAL QUEST</h2>
+          </div>
+          
+          <!-- Rupee Counter -->
+          <div class="flex items-center gap-2 bg-stone-900 border-2 border-amber-500 px-3 py-1">
+            <i class="fa-solid fa-gem text-emerald-400 text-sm"></i>
+            <span class="font-pixel text-xs text-emerald-400" id="dash-rupee-cost">0 RUPEES NEEDED</span>
+          </div>
+        </div>
+
+        <!-- Heart Containers -->
+        <div class="space-y-2">
+          <div class="flex justify-between text-[10px] font-pixel text-amber-300">
+            <span>SUPPLY HEALTH:</span>
+            <span id="dash-heart-text">0 / 14 DAYS SECURED</span>
+          </div>
+
+          <!-- Hearts Grid -->
+          <div id="hearts-container" class="flex flex-wrap gap-2 text-red-500 text-xl py-1">
+            <!-- Dynamic Pixel Hearts Injected Here -->
+          </div>
+        </div>
+
+        <!-- Retro NPC Directive Dialogue Box -->
+        <div class="nes-box p-4 bg-stone-900 flex items-start gap-3">
+          <div class="text-2xl text-amber-400 shrink-0 mt-1">
+            <i class="fa-solid fa-scroll"></i>
+          </div>
+          <div class="space-y-1">
+            <div class="font-pixel text-[9px] text-amber-400 uppercase">OLD SAGE DIRECTIVE:</div>
+            <p id="dash-directive-text" class="font-vt text-lg text-stone-200 tracking-wide leading-tight">
+              "It's dangerous to go hungry! Stock your Loot Shelves first so we can calculate your $0.00 meals!"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- Loot Box -->
+        <div onclick="switchTab('inventory')" class="nes-box-dark p-4 hover:border-amber-400 cursor-pointer transition-all group">
+          <div class="flex justify-between items-center mb-3">
+            <i class="fa-solid fa-boxes-packing text-3xl text-amber-500 group-hover:scale-110 transition-transform"></i>
+            <span class="font-pixel text-[9px] text-amber-400 bg-stone-900 px-2 py-1 border border-amber-800" id="dash-inv-count">0 ITEMS</span>
+          </div>
+          <h3 class="font-pixel text-xs text-white mb-2">1. INVENTORY LOOT</h3>
+          <p class="font-vt text-base text-stone-400">Scan Jar, Can, Box & Bag shelves using AI auto-fill.</p>
+        </div>
+
+        <!-- Quest Log Box -->
+        <div onclick="switchTab('planner')" class="nes-box-dark p-4 hover:border-emerald-400 cursor-pointer transition-all group">
+          <div class="flex justify-between items-center mb-3">
+            <i class="fa-solid fa-shield-heart text-3xl text-emerald-400 group-hover:scale-110 transition-transform"></i>
+            <span class="font-pixel text-[9px] text-emerald-400 bg-stone-900 px-2 py-1 border border-emerald-800" id="dash-ready-count">0 READY</span>
+          </div>
+          <h3 class="font-pixel text-xs text-white mb-2">2. $0 QUEST LOG</h3>
+          <p class="font-vt text-base text-stone-400">Lock in meals that cost $0.00 right now using existing loot.</p>
+        </div>
+
+        <!-- Alchemy Box -->
+        <div onclick="switchTab('synthesizer')" class="nes-box-dark p-4 hover:border-purple-400 cursor-pointer transition-all group">
+          <div class="flex justify-between items-center mb-3">
+            <i class="fa-solid fa-flask text-3xl text-purple-400 group-hover:scale-110 transition-transform"></i>
+            <span class="font-pixel text-[9px] text-purple-300 bg-stone-900 px-2 py-1 border border-purple-800">CRAFT</span>
+          </div>
+          <h3 class="font-pixel text-xs text-white mb-2">3. MEAL ALCHEMY</h3>
+          <p class="font-vt text-base text-stone-400">Synthesize stretch meals out of random remaining shelf items.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 1: SHELF INVENTORY (LOOT) -->
+    <section id="tab-inventory" class="hidden space-y-6">
+      
+      <!-- Smart Quick-Add Bar -->
+      <div class="nes-box-dark p-4 space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="font-pixel text-[9px] text-amber-400 uppercase">SMART AI QUICK-ADD</span>
+          <span class="font-vt text-sm text-stone-400">Auto-detects container zone & size</span>
         </div>
         
         <div class="flex flex-col sm:flex-row gap-2">
-          <input type="text" id="quick-add-input" placeholder="Type item name (e.g. 'peanut butter', 'black beans', 'penne pasta')..." class="flex-1 px-4 py-2.5 border border-stone-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-amber-500 font-medium">
-          <button onclick="handleSmartQuickAdd()" class="bg-amber-600 hover:bg-amber-700 text-stone-950 font-black px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow flex items-center justify-center gap-2">
-            <i class="fa-solid fa-plus"></i> Auto-Categorize & Add
+          <input type="text" id="quick-add-input" placeholder="Type item (e.g. 'peanut butter', 'black beans', 'pasta')..." class="flex-1 px-3 py-2 bg-stone-950 border-2 border-stone-700 font-vt text-xl text-white outline-none focus:border-amber-500">
+          <button onclick="handleSmartQuickAdd()" class="nes-btn px-4 py-2 bg-amber-500 text-stone-950 font-pixel text-[10px] uppercase">
+            + LOOT ITEM
           </button>
         </div>
       </div>
 
       <!-- Container Shelf Filter Tabs -->
-      <div class="flex flex-wrap gap-2 justify-between items-center border-b border-stone-200 pb-3">
-        <div class="flex flex-wrap gap-1">
-          <button onclick="filterContainer('All')" id="btn-filter-All" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-900 text-amber-400">All Shelves</button>
-          <button onclick="filterContainer('Jars')" id="btn-filter-Jars" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">🏺 Jar Vault</button>
-          <button onclick="filterContainer('Cans')" id="btn-filter-Cans" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">🥫 Can Citadel</button>
-          <button onclick="filterContainer('Boxes')" id="btn-filter-Boxes" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">📦 Box Bunker</button>
-          <button onclick="filterContainer('Bags')" id="btn-filter-Bags" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">🛍️ Bag Depot</button>
-          <button onclick="filterContainer('Fridge')" id="btn-filter-Fridge" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">🧀 Chilled Chamber</button>
-          <button onclick="filterContainer('Freezer')" id="btn-filter-Freezer" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200">❄️ Frost Crypt</button>
+      <div class="flex flex-wrap gap-2 justify-between items-center border-b-2 border-stone-800 pb-3">
+        <div class="flex flex-wrap gap-1 font-pixel text-[9px]">
+          <button onclick="filterContainer('All')" id="btn-filter-All" class="nes-btn px-2.5 py-1.5 bg-amber-500 text-stone-950">ALL</button>
+          <button onclick="filterContainer('Jars')" id="btn-filter-Jars" class="nes-btn px-2.5 py-1.5 bg-stone-800 text-amber-300">🏺 JARS</button>
+          <button onclick="filterContainer('Cans')" id="btn-filter-Cans" class="nes-btn px-2.5 py-1.5 bg-stone-800 text-amber-300">🥫 CANS</button>
+          <button onclick="filterContainer('Boxes')" id="btn-filter-Boxes" class="nes-btn px-2.5 py-1.5 bg-stone-800 text-amber-300">📦 BOXES</button>
+          <button onclick="filterContainer('Bags')" id="btn-filter-Bags" class="nes-btn px-2.5 py-1.5 bg-stone-800 text-amber-300">🛍️ BAGS</button>
+          <button onclick="filterContainer('Fridge')" id="btn-filter-Fridge" class="nes-btn px-2.5 py-1.5 bg-stone-800 text-amber-300">🧀 FRIDGE</button>
+          <button onclick="filterContainer('Freezer')" id="btn-filter-Freezer" class="nes-btn px-2.5 py-1.5 bg-stone-800 text-amber-300">❄️ FREEZER</button>
         </div>
-        <button onclick="openCustomItemModal()" class="text-xs font-bold text-amber-800 hover:text-amber-950 flex items-center gap-1">
-          <i class="fa-solid fa-sliders"></i> Manual Item Creator
+        <button onclick="openCustomItemModal()" class="font-pixel text-[9px] text-amber-400 hover:text-amber-300">
+          + MANUAL ITEM
         </button>
       </div>
 
@@ -93,127 +200,114 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Recipe Selection -->
-        <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-5 space-y-4">
-          <h2 class="text-base font-black text-stone-900 uppercase font-serif border-b border-stone-100 pb-2 flex items-center justify-between">
-            <span>Select 2-Week Meals</span>
-            <span id="ready-count-badge" class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold">0 Ready</span>
-          </h2>
-          <p class="text-xs text-stone-500">Pick meals for your 14-day rotation. The engine highlights meals you can cook right now for **$0.00** using existing shelf stock!</p>
+        <div class="nes-box-dark p-4 space-y-4">
+          <div class="flex justify-between items-center border-b-2 border-stone-800 pb-2">
+            <h2 class="font-pixel text-xs text-white uppercase">2-WEEK MEALS</h2>
+            <span id="ready-count-badge" class="font-pixel text-[9px] bg-emerald-900 text-emerald-300 px-2 py-1 border border-emerald-500">0 READY</span>
+          </div>
+          <p class="font-vt text-lg text-stone-400">Green badges show recipes ready to cook for $0.00 right now!</p>
 
-          <div id="planner-recipe-list" class="space-y-3 max-h-[450px] overflow-y-auto pr-1">
-            <!-- Planner Checklist Injected Here -->
+          <div id="planner-recipe-list" class="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+            <!-- Checklist Injected Here -->
           </div>
 
-          <button onclick="deductSelectedMeals()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow flex items-center justify-center gap-2">
-            <i class="fa-solid fa-utensils"></i> Deduct Cooked Meals From Shelves
+          <button onclick="deductSelectedMeals()" class="nes-btn w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-pixel text-[10px] uppercase">
+            EAT MEALS (DEDUCT STOCK)
           </button>
         </div>
 
-        <!-- Net Shopping List Output -->
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-stone-200 p-5 space-y-4">
-          <div class="flex justify-between items-center border-b border-stone-100 pb-3">
+        <!-- Net Shopping Output -->
+        <div class="lg:col-span-2 nes-box-dark p-4 space-y-4">
+          <div class="flex justify-between items-center border-b-2 border-stone-800 pb-3">
             <div>
-              <h2 class="text-base font-black text-stone-900 uppercase font-serif">Net Shopping Deficit</h2>
-              <p class="text-xs text-stone-500">Only shows items you don't already have on your shelves.</p>
+              <h2 class="font-pixel text-xs text-white uppercase">NET SHOPPING DEFICIT</h2>
+              <p class="font-vt text-lg text-stone-400">Only shows what you need to buy at the store.</p>
             </div>
-            <span id="total-shopping-cost" class="text-xl font-black text-emerald-700">$0.00</span>
+            <span id="total-shopping-cost" class="font-pixel text-sm text-emerald-400">$0.00</span>
           </div>
 
-          <div id="net-shopping-container" class="space-y-3">
-            <!-- Net shopping items injected here -->
+          <div id="net-shopping-container" class="space-y-2">
+            <!-- Shopping list injected here -->
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- TAB 3: SCRAPPY KITCHEN AI SYNTHESIZER -->
+    <!-- TAB 3: ALCHEMY SYNTHESIZER -->
     <section id="tab-synthesizer" class="hidden space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 space-y-4">
+      <div class="nes-box-dark p-5 space-y-4">
         <div>
-          <h2 class="text-base font-black text-stone-900 uppercase font-serif">Scrappy Kitchen AI Prompt Generator</h2>
-          <p class="text-xs text-stone-500 mt-1">Stuck on what to make with remaining random items? Click below to generate a tailored prompt using your exact live shelf stock to paste into ChatGPT or Gemini!</p>
+          <h2 class="font-pixel text-xs text-white uppercase">MEAL ALCHEMY PROMPT SYNTHESIZER</h2>
+          <p class="font-vt text-lg text-stone-400 mt-1">Stuck on leftover items? Generate a prompt for ChatGPT/Gemini using your live shelf loot!</p>
         </div>
 
-        <button onclick="generatePantryRaidPrompt()" class="bg-stone-900 hover:bg-stone-800 text-amber-400 font-bold px-5 py-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow flex items-center gap-2">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Synthesize Zero-Dollar Prompt
+        <button onclick="generatePantryRaidPrompt()" class="nes-btn px-4 py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 font-pixel text-[10px] uppercase">
+          SYNTHESIZE PROMPT
         </button>
 
         <div class="space-y-2">
-          <label class="block text-xs font-bold text-stone-600">Generated Prompt (Ready to Copy)</label>
-          <textarea id="synthesizer-output" rows="8" readonly class="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl text-xs font-mono text-stone-800 outline-none"></textarea>
+          <label class="font-pixel text-[9px] text-amber-400 uppercase">GENERATED PROMPT (READY TO COPY)</label>
+          <textarea id="synthesizer-output" rows="8" readonly class="w-full p-3 bg-stone-950 border-2 border-stone-800 font-vt text-xl text-amber-200 outline-none"></textarea>
         </div>
 
-        <button onclick="copySynthesizerPrompt()" class="bg-amber-600 hover:bg-amber-700 text-stone-950 font-bold px-4 py-2 rounded-lg text-xs uppercase tracking-wider transition-all">
-          <i class="fa-solid fa-copy mr-1"></i> Copy Prompt to Clipboard
+        <button onclick="copySynthesizerPrompt()" class="nes-btn px-4 py-2 bg-stone-800 hover:bg-stone-700 text-white font-pixel text-[9px] uppercase">
+          COPY TO CLIPBOARD
         </button>
-      </div>
-    </section>
-
-    <!-- TAB 4: RECIPE LIBRARY -->
-    <section id="tab-recipes" class="hidden space-y-6">
-      <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 space-y-4">
-        <div class="flex justify-between items-center border-b border-stone-100 pb-3">
-          <h2 class="text-base font-black text-stone-900 uppercase font-serif">Master Recipe Library</h2>
-        </div>
-        <div id="recipe-library-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <!-- Recipe Cards -->
-        </div>
       </div>
     </section>
 
   </main>
 
   <!-- Manual Custom Item Modal -->
-  <div id="item-modal" class="fixed inset-0 bg-stone-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 border border-stone-200">
-      <h3 class="text-base font-black text-stone-900 uppercase font-serif border-b pb-2">Manual Item Creator</h3>
+  <div id="item-modal" class="fixed inset-0 bg-stone-950/90 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="nes-box-dark max-w-md w-full p-5 space-y-4">
+      <h3 class="font-pixel text-xs text-white uppercase border-b-2 border-stone-800 pb-2">CREATE MANUAL ITEM</h3>
       <form id="item-form" onsubmit="handleSaveCustomItem(event)" class="space-y-3">
         <div>
-          <label class="block text-xs font-bold text-stone-600 mb-1">Item Name</label>
-          <input type="text" id="modal-name" required placeholder="e.g., Salsa" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-amber-500">
+          <label class="font-pixel text-[9px] text-stone-400 block mb-1">ITEM NAME</label>
+          <input type="text" id="modal-name" required placeholder="e.g. Salsa" class="w-full px-3 py-2 bg-stone-950 border-2 border-stone-800 font-vt text-xl text-white outline-none">
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-xs font-bold text-stone-600 mb-1">Container Zone</label>
-            <select id="modal-zone" class="w-full px-3 py-2 border rounded-xl text-xs outline-none">
+            <label class="font-pixel text-[9px] text-stone-400 block mb-1">CONTAINER</label>
+            <select id="modal-zone" class="w-full px-2 py-2 bg-stone-950 border-2 border-stone-800 font-vt text-xl text-white outline-none">
               <option value="Jars">🏺 Jar Vault</option>
               <option value="Cans">🥫 Can Citadel</option>
               <option value="Boxes">📦 Box Bunker</option>
               <option value="Bags">🛍️ Bag Depot</option>
-              <option value="Fridge">🧀 Chilled Chamber</option>
-              <option value="Freezer">❄️ Frost Crypt</option>
+              <option value="Fridge">🧀 Fridge</option>
+              <option value="Freezer">❄️ Freezer</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-bold text-stone-600 mb-1">Unit</label>
-            <input type="text" id="modal-unit" required placeholder="can, oz, box" class="w-full px-3 py-2 border rounded-xl text-xs outline-none">
+            <label class="font-pixel text-[9px] text-stone-400 block mb-1">UNIT</label>
+            <input type="text" id="modal-unit" required placeholder="can, oz" class="w-full px-3 py-2 bg-stone-950 border-2 border-stone-800 font-vt text-xl text-white outline-none">
           </div>
         </div>
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-xs font-bold text-stone-600 mb-1">In Stock</label>
-            <input type="number" step="0.01" id="modal-stock" value="1" required class="w-full px-3 py-2 border rounded-xl text-xs outline-none">
+            <label class="font-pixel text-[9px] text-stone-400 block mb-1">IN STOCK</label>
+            <input type="number" step="0.01" id="modal-stock" value="1" required class="w-full px-2 py-2 bg-stone-950 border-2 border-stone-800 font-vt text-xl text-white outline-none">
           </div>
           <div>
-            <label class="block text-xs font-bold text-stone-600 mb-1">Pkg Size</label>
-            <input type="number" step="0.01" id="modal-pkg-size" value="1" required class="w-full px-3 py-2 border rounded-xl text-xs outline-none">
+            <label class="font-pixel text-[9px] text-stone-400 block mb-1">PKG SIZE</label>
+            <input type="number" step="0.01" id="modal-pkg-size" value="1" required class="w-full px-2 py-2 bg-stone-950 border-2 border-stone-800 font-vt text-xl text-white outline-none">
           </div>
           <div>
-            <label class="block text-xs font-bold text-stone-600 mb-1">Price ($)</label>
-            <input type="number" step="0.01" id="modal-price" value="1.99" required class="w-full px-3 py-2 border rounded-xl text-xs outline-none">
+            <label class="font-pixel text-[9px] text-stone-400 block mb-1">PRICE ($)</label>
+            <input type="number" step="0.01" id="modal-price" value="1.99" required class="w-full px-2 py-2 bg-stone-950 border-2 border-stone-800 font-vt text-xl text-white outline-none">
           </div>
         </div>
-        <div class="flex justify-end gap-2 pt-2 border-t">
-          <button type="button" onclick="closeCustomItemModal()" class="px-4 py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 rounded-lg">Cancel</button>
-          <button type="submit" class="px-4 py-2 text-xs font-bold bg-amber-600 text-stone-950 rounded-lg hover:bg-amber-700">Save Item</button>
+        <div class="flex justify-end gap-2 pt-2 border-t-2 border-stone-800">
+          <button type="button" onclick="closeCustomItemModal()" class="nes-btn px-3 py-1.5 bg-stone-800 text-stone-300 font-pixel text-[9px]">CANCEL</button>
+          <button type="submit" class="nes-btn px-4 py-1.5 bg-amber-500 text-stone-950 font-pixel text-[9px]">SAVE</button>
         </div>
       </form>
     </div>
   </div>
 
   <script>
-    // --- SMART AUTO-CLASSIFICATION DICTIONARY ---
     const AUTO_RULES = [
       { keywords: ['peanut butter', 'jam', 'jelly', 'salsa', 'marinara', 'sauce', 'mayo', 'pickles', 'dressing', 'syrup', 'oil'], zone: 'Jars', unit: 'oz', pkgSize: 16, price: 2.99 },
       { keywords: ['beans', 'black beans', 'chickpeas', 'tomatoes', 'diced tomatoes', 'soup', 'tuna', 'corn', 'coconut milk'], zone: 'Cans', unit: 'can', pkgSize: 1, price: 0.99 },
@@ -279,7 +373,6 @@
       localStorage.setItem('qm_recipes', JSON.stringify(recipes));
     }
 
-    // --- SMART QUICK-ADD LOGIC ---
     function handleSmartQuickAdd() {
       const inputEl = document.getElementById('quick-add-input');
       const rawName = inputEl.value.trim();
@@ -421,10 +514,54 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
 
     // --- RENDER FUNCTIONS ---
     function renderAll() {
+      renderDashboard();
       renderInventoryGrid();
       renderPlannerList();
       renderNetShopping();
-      renderRecipeLibrary();
+    }
+
+    function renderDashboard() {
+      let selectedMealsCount = 0;
+      recipes.forEach(r => {
+        if (plannerState[r.id] && plannerState[r.id].selected) selectedMealsCount++;
+      });
+
+      const fundedDays = Math.min(14, selectedMealsCount);
+      document.getElementById('dash-heart-text').textContent = `${fundedDays} / 14 DAYS SECURED`;
+
+      // Render Pixel Hearts
+      const heartsContainer = document.getElementById('hearts-container');
+      heartsContainer.innerHTML = '';
+
+      for (let i = 1; i <= 14; i++) {
+        const heart = document.createElement('i');
+        if (i <= fundedDays) {
+          heart.className = "fa-solid fa-heart text-red-500 drop-shadow";
+        } else {
+          heart.className = "fa-regular fa-heart text-stone-700";
+        }
+        heartsContainer.appendChild(heart);
+      }
+
+      document.getElementById('dash-inv-count').textContent = `${inventory.length} ITEMS`;
+      
+      let readyCount = 0;
+      recipes.forEach(r => { if (checkMealReadiness(r)) readyCount++; });
+      document.getElementById('dash-ready-count').textContent = `${readyCount} READY`;
+
+      const netList = calculateNetShopping();
+      let grandCost = 0;
+      netList.forEach(item => grandCost += item.cost);
+      document.getElementById('dash-rupee-cost').textContent = `${grandCost.toFixed(2)} RUPEES NEEDED`;
+
+      const directiveTextEl = document.getElementById('dash-directive-text');
+      if (inventory.length < 3) {
+        directiveTextEl.textContent = '"It\'s dangerous to go hungry! Go to LOOT and scan your shelves using Smart AI Entry!"';
+      } else if (fundedDays < 7) {
+        directiveTextEl.textContent = '"Select $0.00 meals in your QUEST LOG to fill up your 14 Heart Containers!"';
+      } else {
+        directiveTextEl.textContent = '"Your hearts are full! Use MEAL ALCHEMY to synthesize creative recipes for leftover loot!"';
+      }
     }
 
     function renderInventoryGrid() {
@@ -437,21 +574,21 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
         const zoneIcons = { Jars: '🏺', Cans: '🥫', Boxes: '📦', Bags: '🛍️', Fridge: '🧀', Freezer: '❄️' };
         
         const card = document.createElement('div');
-        card.className = "bg-white rounded-2xl p-4 border border-stone-200 shadow-sm flex flex-col justify-between space-y-3";
+        card.className = "nes-box-dark p-4 space-y-3 flex flex-col justify-between";
         card.innerHTML = `
           <div>
             <div class="flex justify-between items-start">
-              <span class="text-xs font-bold bg-stone-100 text-stone-700 px-2.5 py-0.5 rounded-full">${zoneIcons[item.zone] || '📦'} ${item.zone}</span>
-              <button onclick="deleteInventoryItem(${index})" class="text-stone-300 hover:text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+              <span class="font-pixel text-[8px] bg-stone-900 text-amber-300 px-2 py-1 border border-amber-900">${zoneIcons[item.zone] || '📦'} ${item.zone}</span>
+              <button onclick="deleteInventoryItem(${index})" class="text-stone-600 hover:text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button>
             </div>
-            <h3 class="font-bold text-stone-900 text-base mt-2">${item.name}</h3>
-            <p class="text-xs text-stone-500">In Stock: <span class="font-black text-stone-800 text-sm">${item.inStock} ${item.unit}</span></p>
+            <h3 class="font-pixel text-xs text-white mt-3">${item.name}</h3>
+            <p class="font-vt text-lg text-stone-400 mt-1">STOCK: <span class="font-bold text-amber-400">${item.inStock} ${item.unit}</span></p>
           </div>
-          <div class="flex items-center justify-between border-t border-stone-100 pt-2">
-            <span class="text-[11px] text-stone-400 font-medium">$${item.price.toFixed(2)} / ${item.pkgSize} ${item.unit}</span>
+          <div class="flex items-center justify-between border-t-2 border-stone-800 pt-2">
+            <span class="font-vt text-sm text-stone-500">$${item.price.toFixed(2)} / ${item.pkgSize} ${item.unit}</span>
             <div class="flex gap-1">
-              <button onclick="adjustStock(${index}, -1)" class="w-8 h-8 bg-stone-100 hover:bg-stone-200 rounded-lg font-black text-stone-700 text-sm flex items-center justify-center">-</button>
-              <button onclick="adjustStock(${index}, 1)" class="w-8 h-8 bg-amber-500 hover:bg-amber-600 text-stone-950 rounded-lg font-black text-sm flex items-center justify-center">+</button>
+              <button onclick="adjustStock(${index}, -1)" class="nes-btn w-7 h-7 bg-stone-800 text-white font-pixel text-[10px] flex items-center justify-center">-</button>
+              <button onclick="adjustStock(${index}, 1)" class="nes-btn w-7 h-7 bg-amber-500 text-stone-950 font-pixel text-[10px] flex items-center justify-center">+</button>
             </div>
           </div>
         `;
@@ -471,20 +608,20 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
         const state = plannerState[r.id] || { selected: false, targetServings: r.baseServings };
 
         const card = document.createElement('div');
-        card.className = `p-3 rounded-xl border transition-all ${isReady ? 'bg-emerald-50/60 border-emerald-200' : 'bg-stone-50 border-stone-200'}`;
+        card.className = `p-3 border-2 transition-all ${isReady ? 'bg-emerald-950/40 border-emerald-500' : 'bg-stone-950 border-stone-800'}`;
         card.innerHTML = `
           <div class="flex items-start justify-between gap-2">
-            <label class="flex items-center gap-2 cursor-pointer font-bold text-xs text-stone-800">
-              <input type="checkbox" ${state.selected ? 'checked' : ''} onchange="togglePlannerRecipe('${r.id}', this.checked)" class="w-4 h-4 rounded text-amber-600">
+            <label class="flex items-center gap-2 cursor-pointer font-pixel text-[9px] text-stone-200">
+              <input type="checkbox" ${state.selected ? 'checked' : ''} onchange="togglePlannerRecipe('${r.id}', this.checked)" class="w-4 h-4 bg-stone-900 border-2 border-stone-700 text-amber-500">
               <span>${r.name}</span>
             </label>
-            ${isReady ? '<span class="text-[10px] font-black bg-emerald-600 text-white px-2 py-0.5 rounded-full uppercase">$0 Ready</span>' : '<span class="text-[10px] font-bold bg-stone-200 text-stone-600 px-2 py-0.5 rounded-full">Needs Stock</span>'}
+            ${isReady ? '<span class="font-pixel text-[8px] bg-emerald-500 text-stone-950 px-2 py-0.5">$0 READY</span>' : '<span class="font-pixel text-[8px] bg-stone-800 text-stone-500 px-2 py-0.5">NEEDS LOOT</span>'}
           </div>
         `;
         container.appendChild(card);
       });
 
-      document.getElementById('ready-count-badge').textContent = `${readyCount} $0 Ready`;
+      document.getElementById('ready-count-badge').textContent = `${readyCount} READY`;
     }
 
     function renderNetShopping() {
@@ -498,13 +635,13 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       list.forEach(item => {
         grandCost += item.cost;
         const div = document.createElement('div');
-        div.className = "flex justify-between items-center p-3 rounded-xl bg-stone-50 border border-stone-100 text-xs";
+        div.className = "flex justify-between items-center p-3 bg-stone-950 border-2 border-stone-800 font-vt text-lg";
         div.innerHTML = `
           <div>
-            <div class="font-bold text-stone-800">${item.name}</div>
-            <div class="text-[11px] text-stone-500">Needed: ${item.needed} ${item.unit} | On Hand: ${item.owned} | Deficit: <span class="font-bold text-amber-700">${item.deficit} ${item.unit}</span></div>
+            <div class="font-bold text-white">${item.name}</div>
+            <div class="text-stone-400 text-sm">Needed: ${item.needed} ${item.unit} | Deficit: <span class="text-amber-400">${item.deficit} ${item.unit}</span></div>
           </div>
-          <div class="font-black text-stone-900 text-sm">$${item.cost.toFixed(2)}</div>
+          <div class="font-pixel text-xs text-emerald-400">$${item.cost.toFixed(2)}</div>
         `;
         container.appendChild(div);
       });
@@ -512,32 +649,23 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       totalEl.textContent = `$${grandCost.toFixed(2)}`;
     }
 
-    function renderRecipeLibrary() {
-      const container = document.getElementById('recipe-library-grid');
-      container.innerHTML = '';
-      recipes.forEach(r => {
-        const div = document.createElement('div');
-        div.className = "bg-stone-50 border border-stone-200 p-4 rounded-xl space-y-2";
-        div.innerHTML = `<h3 class="font-bold text-stone-900">${r.name}</h3><p class="text-xs text-stone-500">${r.ingredients.length} Ingredients | Base Servings: ${r.baseServings}</p>`;
-        container.appendChild(div);
-      });
-    }
-
-    // --- NAVIGATION & UTILS ---
     function switchTab(tab) {
-      ['inventory', 'planner', 'synthesizer', 'recipes'].forEach(t => {
+      ['dashboard', 'inventory', 'planner', 'synthesizer'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.add('hidden');
-        document.getElementById(`nav-${t}`).className = "px-3 py-2 rounded-lg transition-all text-amber-200 hover:text-white";
+        const btn = document.getElementById(`nav-${t}`);
+        if (btn) btn.className = "nes-btn px-3 py-2 bg-stone-800 text-amber-300 hover:bg-stone-700";
       });
+
       document.getElementById(`tab-${tab}`).classList.remove('hidden');
-      document.getElementById(`nav-${tab}`).className = "px-3 py-2 rounded-lg transition-all bg-amber-600 text-stone-950 shadow";
+      const activeBtn = document.getElementById(`nav-${tab}`);
+      if (activeBtn) activeBtn.className = "nes-btn px-3 py-2 bg-amber-500 text-stone-950 font-bold";
     }
 
     function filterContainer(zone) {
       activeContainerFilter = zone;
       ['All', 'Jars', 'Cans', 'Boxes', 'Bags', 'Fridge', 'Freezer'].forEach(z => {
         const btn = document.getElementById(`btn-filter-${z}`);
-        if (btn) btn.className = z === zone ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-900 text-amber-400" : "px-3 py-1.5 rounded-lg text-xs font-bold bg-stone-100 text-stone-600 hover:bg-stone-200";
+        if (btn) btn.className = z === zone ? "nes-btn px-2.5 py-1.5 bg-amber-500 text-stone-950" : "nes-btn px-2.5 py-1.5 bg-stone-800 text-amber-300";
       });
       renderInventoryGrid();
     }
@@ -546,6 +674,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       plannerState[id].selected = checked;
       renderPlannerList();
       renderNetShopping();
+      renderDashboard();
     }
 
     function deleteInventoryItem(idx) {
