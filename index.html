@@ -1,49 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-100">
+<html lang="en" class="h-full bg-[#f4eee6]">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Queensbury Manor: Food & Inventory Commander</title>
+  <title>The Queensbury Arms: Larder & Provisioner</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Classic Pub Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap" rel="stylesheet">
   <!-- Tesseract.js for OCR Image Receipt Processing -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
   <style>
     [x-cloak] { display: none !important; }
+    .font-pub-header { font-family: 'Cinzel', serif; }
+    .font-pub-body { font-family: 'Playfair Display', Georgia, serif; }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans text-slate-900 bg-slate-100 antialiased">
+<body class="h-full flex flex-col font-sans text-stone-900 bg-[#f4eee6] antialiased selection:bg-amber-800 selection:text-amber-100">
 
-  <!-- Header -->
-  <header class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+  <!-- Olde English Pub Header -->
+  <header class="bg-[#2a140e] text-amber-100 p-4 border-b-4 border-[#b8860b] shadow-2xl sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
       
+      <!-- Pub Crest & Branding -->
       <div class="flex items-center space-x-3 cursor-pointer" onclick="openWelcomeModal()">
-        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white text-xl font-black shadow">
-          <i class="fa-solid fa-boxes-packing"></i>
+        <div class="w-12 h-12 bg-[#721c24] border-2 border-[#b8860b] rounded-full flex items-center justify-center text-amber-300 text-2xl shadow-inner shrink-0">
+          <i class="fa-solid fa-beer-mug-empty"></i>
         </div>
         <div>
-          <h1 class="text-lg font-bold tracking-tight">Queensbury Manor</h1>
-          <p class="text-xs text-indigo-300 font-medium">14-Day Inventory & Food Planner</p>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-black tracking-wider text-amber-200 font-pub-header uppercase drop-shadow">THE QUEENSBURY ARMS</h1>
+            <span class="text-amber-400 text-xs"><i class="fa-solid fa-shield-halved"></i></span>
+          </div>
+          <p class="text-xs text-amber-300/80 font-pub-body italic tracking-wide">Est. 14-Day Larder Ledger & Provisioner</p>
         </div>
       </div>
 
-      <!-- Tab Navigation -->
-      <nav class="flex flex-wrap gap-1 text-xs font-semibold">
-        <button id="nav-dashboard" onclick="switchTab('dashboard')" class="px-3 py-2 rounded-lg bg-indigo-600 text-white shadow">
-          <i class="fa-solid fa-gauge-high mr-1"></i> Dashboard
+      <!-- Navigation Bar -->
+      <nav class="flex flex-wrap gap-1 text-xs font-bold font-pub-header">
+        <button id="nav-dashboard" onclick="switchTab('dashboard')" class="px-3.5 py-2 rounded-lg bg-[#721c24] text-amber-200 border border-amber-600/50 shadow">
+          <i class="fa-solid fa-compass mr-1"></i> Tavern Hub
         </button>
-        <button id="nav-inventory" onclick="switchTab('inventory')" class="px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">
-          <i class="fa-solid fa-boxes-stacked mr-1"></i> 1. Pantry Stock
+        <button id="nav-inventory" onclick="switchTab('inventory')" class="px-3.5 py-2 rounded-lg text-amber-200/80 hover:bg-[#3d1c15] hover:text-amber-200 transition">
+          <i class="fa-solid fa-boxes-stacked mr-1"></i> 1. Larder Stock
         </button>
-        <button id="nav-planner" onclick="switchTab('planner')" class="px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">
-          <i class="fa-solid fa-calendar-days mr-1"></i> 2. Meal Planner
+        <button id="nav-planner" onclick="switchTab('planner')" class="px-3.5 py-2 rounded-lg text-amber-200/80 hover:bg-[#3d1c15] hover:text-amber-200 transition">
+          <i class="fa-solid fa-utensils mr-1"></i> 2. Feast Planner
         </button>
-        <button id="nav-synthesizer" onclick="switchTab('synthesizer')" class="px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">
-          <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> 3. AI Ideas
+        <button id="nav-synthesizer" onclick="switchTab('synthesizer')" class="px-3.5 py-2 rounded-lg text-amber-200/80 hover:bg-[#3d1c15] hover:text-amber-200 transition">
+          <i class="fa-solid fa-scroll mr-1"></i> 3. Alchemy Ideas
         </button>
-        <button id="nav-recipes" onclick="switchTab('recipes')" class="px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800">
-          <i class="fa-solid fa-book-bookmark mr-1"></i> Recipes
+        <button id="nav-recipes" onclick="switchTab('recipes')" class="px-3.5 py-2 rounded-lg text-amber-200/80 hover:bg-[#3d1c15] hover:text-amber-200 transition">
+          <i class="fa-solid fa-book-open mr-1"></i> Cookery Book
         </button>
       </nav>
     </div>
@@ -55,134 +63,134 @@
     <!-- TAB 0: DASHBOARD & GUIDED OVERVIEW -->
     <section id="tab-dashboard" class="space-y-6">
       
-      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-4">
+      <div class="bg-[#fdfbf7] p-6 rounded-2xl shadow-md border-2 border-[#d4c3ab] space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b-2 border-stone-200 pb-4">
           <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-100">Active Operational Target</span>
-            <h2 class="text-xl font-black text-slate-900 mt-2">14-Day Zero-Budget Survival Plan</h2>
+            <span class="text-xs font-bold uppercase tracking-widest text-[#721c24] bg-red-100 px-3 py-1 rounded-full border border-red-200 font-pub-header">Fortnight Campaign Goal</span>
+            <h2 class="text-2xl font-black text-[#2a140e] font-pub-header mt-2">14-Day Zero-Coin Provisions Target</h2>
           </div>
           
-          <div class="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl">
-            <i class="fa-solid fa-cart-shopping text-emerald-400"></i>
-            <span class="font-bold text-sm text-emerald-400" id="dash-rupee-cost">$0.00 Store Cost</span>
+          <div class="flex items-center gap-2 bg-[#2a140e] text-amber-200 border border-[#b8860b] px-4 py-2 rounded-xl shadow">
+            <i class="fa-solid fa-coins text-amber-400"></i>
+            <span class="font-bold text-sm font-pub-header" id="dash-rupee-cost">$0.00 Town Market Deficit</span>
           </div>
         </div>
 
         <!-- Progress Tracker -->
         <div class="space-y-2">
-          <div class="flex justify-between text-xs font-bold text-slate-700">
-            <span>Days Covered Using On-Hand Food:</span>
-            <span id="dash-heart-text" class="text-indigo-600">0 / 14 Days</span>
+          <div class="flex justify-between text-xs font-bold text-stone-700 font-pub-header">
+            <span>Fortnight Rations Secured from On-Hand Stock:</span>
+            <span id="dash-heart-text" class="text-[#721c24]">0 / 14 Days</span>
           </div>
 
-          <div id="hearts-container" class="flex flex-wrap gap-2 text-rose-500 text-2xl py-1"></div>
+          <div id="hearts-container" class="flex flex-wrap gap-2 text-rose-700 text-2xl py-1"></div>
         </div>
 
-        <!-- Guided Banner -->
-        <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <!-- Tavern Keeper Directive Banner -->
+        <div class="bg-[#f7efe3] border-2 border-[#b8860b]/60 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-inner">
           <div class="flex items-start gap-3">
-            <div class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center text-lg shrink-0 mt-0.5">
-              <i class="fa-solid fa-compass"></i>
+            <div class="w-10 h-10 bg-[#721c24] text-amber-200 rounded-xl flex items-center justify-center text-lg shrink-0 mt-0.5 border border-amber-500/40">
+              <i class="fa-solid fa-person-shelter"></i>
             </div>
             <div>
-              <div class="text-xs font-bold text-indigo-900 uppercase" id="dash-step-title">What to do next:</div>
-              <p id="dash-directive-text" class="text-sm font-semibold text-slate-800 mt-0.5">
-                "Step 1: Go to Pantry Stock and log your real shelf items."
+              <div class="text-xs font-bold text-[#721c24] uppercase tracking-wider font-pub-header" id="dash-step-title">Tavern Keeper's Directive:</div>
+              <p id="dash-directive-text" class="text-base font-semibold text-stone-900 font-pub-body mt-0.5">
+                "First, inspect your cellar shelves and log your barrels, jars, and sacks!"
               </p>
             </div>
           </div>
 
-          <button id="dash-action-btn" onclick="switchTab('inventory')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow transition">
-            Open Pantry Stock &rarr;
+          <button id="dash-action-btn" onclick="switchTab('inventory')" class="bg-[#721c24] hover:bg-[#58131b] text-amber-100 font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow border border-amber-600/40 transition font-pub-header">
+            Open Larder Stock &rarr;
           </button>
         </div>
       </div>
 
-      <!-- 3 Simple Step Cards -->
+      <!-- 3 Guided Tavern Step Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         
-        <div onclick="switchTab('inventory')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-indigo-400 cursor-pointer shadow-sm transition flex flex-col justify-between space-y-4">
+        <div onclick="switchTab('inventory')" class="bg-[#fdfbf7] p-5 rounded-2xl border-2 border-[#d4c3ab] hover:border-[#b8860b] cursor-pointer shadow-sm transition flex flex-col justify-between space-y-4 group">
           <div>
             <div class="flex justify-between items-center mb-2">
-              <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">STEP 1</span>
-              <span class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded" id="dash-inv-count">0 Items</span>
+              <span class="text-xs font-bold text-[#721c24] bg-red-100 px-2 py-0.5 rounded font-pub-header">STEP 1</span>
+              <span class="text-xs font-bold text-stone-700 bg-stone-200 px-2 py-0.5 rounded font-pub-header" id="dash-inv-count">0 Provisions</span>
             </div>
-            <h3 class="font-bold text-base text-slate-900 mb-1">1. Log Pantry Stock</h3>
-            <p class="text-xs text-slate-500">Scan, type, or upload photo receipts for jar, bottle, can, box, and bag counts.</p>
+            <h3 class="font-black text-base text-[#2a140e] font-pub-header mb-1">1. Audit Larder Stock</h3>
+            <p class="text-xs text-stone-600 font-pub-body">Log your jar, bottle, can, box, and bag stores using fast entry.</p>
           </div>
-          <button class="w-full py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl uppercase">Start Step 1 &rarr;</button>
+          <button class="w-full py-2 bg-[#721c24] text-amber-100 font-bold text-xs rounded-xl uppercase font-pub-header border border-amber-600/30">Start Audit &rarr;</button>
         </div>
 
-        <div onclick="switchTab('planner')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-400 cursor-pointer shadow-sm transition flex flex-col justify-between space-y-4">
+        <div onclick="switchTab('planner')" class="bg-[#fdfbf7] p-5 rounded-2xl border-2 border-[#d4c3ab] hover:border-emerald-600 cursor-pointer shadow-sm transition flex flex-col justify-between space-y-4 group">
           <div>
             <div class="flex justify-between items-center mb-2">
-              <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">STEP 2</span>
-              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded" id="dash-ready-count">0 Ready</span>
+              <span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded font-pub-header">STEP 2</span>
+              <span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded font-pub-header" id="dash-ready-count">0 Ready</span>
             </div>
-            <h3 class="font-bold text-base text-slate-900 mb-1">2. Lock In $0 Meals</h3>
-            <p class="text-xs text-slate-500">Pick recipes that cost $0.00 right now using items on your shelves.</p>
+            <h3 class="font-black text-base text-[#2a140e] font-pub-header mb-1">2. Lock In $0 Feasts</h3>
+            <p class="text-xs text-stone-600 font-pub-body">Select recipes that cost zero town coin using existing cellar stock.</p>
           </div>
-          <button class="w-full py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl uppercase">Go to Step 2 &rarr;</button>
+          <button class="w-full py-2 bg-emerald-800 text-emerald-100 font-bold text-xs rounded-xl uppercase font-pub-header border border-emerald-600/30">Go to Planner &rarr;</button>
         </div>
 
-        <div onclick="switchTab('synthesizer')" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-purple-400 cursor-pointer shadow-sm transition flex flex-col justify-between space-y-4">
+        <div onclick="switchTab('synthesizer')" class="bg-[#fdfbf7] p-5 rounded-2xl border-2 border-[#d4c3ab] hover:border-amber-600 cursor-pointer shadow-sm transition flex flex-col justify-between space-y-4 group">
           <div>
             <div class="flex justify-between items-center mb-2">
-              <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">STEP 3</span>
-              <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">AI Help</span>
+              <span class="text-xs font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded font-pub-header">STEP 3</span>
+              <span class="text-xs font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded font-pub-header">Alchemy</span>
             </div>
-            <h3 class="font-bold text-base text-slate-900 mb-1">3. AI Recipe Ideas</h3>
-            <p class="text-xs text-slate-500">Generate custom stretch meals out of random leftover items.</p>
+            <h3 class="font-black text-base text-[#2a140e] font-pub-header mb-1">3. Kitchen Alchemy</h3>
+            <p class="text-xs text-stone-600 font-pub-body">Synthesize custom stretch recipes out of remaining random pantry odds and ends.</p>
           </div>
-          <button class="w-full py-2 bg-purple-600 text-white font-bold text-xs rounded-xl uppercase">Go to Step 3 &rarr;</button>
+          <button class="w-full py-2 bg-[#2a140e] text-amber-200 font-bold text-xs rounded-xl uppercase font-pub-header border border-amber-600/30">Synthesize &rarr;</button>
         </div>
 
       </div>
     </section>
 
-    <!-- TAB 1: PANTRY STOCK -->
+    <!-- TAB 1: LARDER STOCK -->
     <section id="tab-inventory" class="hidden space-y-6">
       
       <!-- Overhaul Entry Form & Receipt Import Header -->
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-2">
+      <div class="bg-[#fdfbf7] p-5 rounded-2xl shadow-md border-2 border-[#d4c3ab] space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-stone-200 pb-3 gap-2">
           <div>
-            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-cart-flatbed text-indigo-600"></i> Pantry Overhaul & Stock Entry
+            <h2 class="text-base font-black text-[#2a140e] font-pub-header flex items-center gap-2">
+              <i class="fa-solid fa-wheat-awn text-[#721c24]"></i> Cellar & Larder Fast Stock Log
             </h2>
-            <p class="text-xs text-slate-500">Fast Item Logging & Receipt Ingestion</p>
+            <p class="text-xs text-stone-600 font-pub-body italic">Log provisions by shelf zone or upload merchant receipts</p>
           </div>
-          <button onclick="openReceiptModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase shadow transition flex items-center gap-2">
-            <i class="fa-solid fa-receipt"></i> Import Grocery Receipt
+          <button onclick="openReceiptModal()" class="bg-emerald-800 hover:bg-emerald-900 text-emerald-100 font-bold px-4 py-2 rounded-xl text-xs uppercase shadow transition flex items-center gap-2 font-pub-header border border-emerald-600/40">
+            <i class="fa-solid fa-receipt"></i> Import Merchant Receipt
           </button>
         </div>
 
-        <form id="overhaul-form" onsubmit="handleOverhaulSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <form id="overhaul-form" onsubmit="handleOverhaulSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-[#f7efe3] p-4 rounded-xl border border-[#d4c3ab]">
           <div class="sm:col-span-4">
-            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Item Name</label>
-            <input type="text" id="ov-name" required placeholder="e.g. Spaghetti Sauce, Salad Dressing, Soy Sauce" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-600">
+            <label class="block text-xs font-bold uppercase text-stone-700 mb-1 font-pub-header">Provision Name</label>
+            <input type="text" id="ov-name" required placeholder="e.g. Spaghetti Sauce, Rigatoni, Olive Oil" class="w-full px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm font-semibold text-stone-900 outline-none focus:ring-2 focus:ring-[#721c24]">
           </div>
 
           <div class="sm:col-span-3">
-            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Shelf Zone</label>
-            <select id="ov-zone" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-600">
+            <label class="block text-xs font-bold uppercase text-stone-700 mb-1 font-pub-header">Cellar Zone</label>
+            <select id="ov-zone" class="w-full px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm font-semibold text-stone-900 outline-none focus:ring-2 focus:ring-[#721c24]">
               <option value="Boxes">📦 Box Bunker</option>
-              <option value="Jars">🏺 Jar Vault</option>
+              <option value="Jars">🏺 Jar & Bottle Vault</option>
               <option value="Cans">🥫 Can Citadel</option>
               <option value="Bags">🛍️ Bag Depot</option>
-              <option value="Fridge">🧀 Fridge</option>
-              <option value="Freezer">❄️ Freezer</option>
+              <option value="Fridge">🧀 Cold Cellar / Fridge</option>
+              <option value="Freezer">❄️ Frost Vault / Freezer</option>
             </select>
           </div>
 
           <div class="sm:col-span-2">
-            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Qty</label>
-            <input type="number" step="1" id="ov-qty" min="1" value="1" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-900 text-center outline-none focus:ring-2 focus:ring-indigo-600">
+            <label class="block text-xs font-bold uppercase text-stone-700 mb-1 font-pub-header">Quantity</label>
+            <input type="number" step="1" id="ov-qty" min="1" value="1" required class="w-full px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm font-bold text-stone-900 text-center outline-none focus:ring-2 focus:ring-[#721c24]">
           </div>
 
           <div class="sm:col-span-3">
-            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Unit</label>
-            <select id="ov-unit" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-600">
+            <label class="block text-xs font-bold uppercase text-stone-700 mb-1 font-pub-header">Measure Unit</label>
+            <select id="ov-unit" class="w-full px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm font-semibold text-stone-900 outline-none focus:ring-2 focus:ring-[#721c24]">
               <option value="box">box</option>
               <option value="jar">jar</option>
               <option value="bottle">bottle</option>
@@ -195,17 +203,17 @@
           </div>
 
           <div class="sm:col-span-12 flex justify-end pt-1">
-            <button type="submit" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-lg text-xs uppercase tracking-wider transition shadow">
-              + Log to Shelf
+            <button type="submit" class="w-full sm:w-auto bg-[#2a140e] hover:bg-[#1a0c09] text-amber-200 font-bold py-2.5 px-6 rounded-lg text-xs uppercase tracking-wider transition shadow border border-amber-600/40 font-pub-header">
+              + Log to Cellar
             </button>
           </div>
         </form>
 
         <div class="pt-2">
-          <div class="text-xs font-bold text-slate-600 uppercase mb-1">Or Auto-Add via Smart Detector:</div>
+          <div class="text-xs font-bold text-stone-700 uppercase mb-1 font-pub-header">Or Auto-Add via Smart Detector:</div>
           <div class="flex gap-2">
-            <input type="text" id="quick-add-input" placeholder="Type item name (e.g. 'ketchup', 'soy sauce')..." class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-600">
-            <button onclick="handleSmartQuickAdd()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs uppercase transition shadow">
+            <input type="text" id="quick-add-input" placeholder="Type provision name (e.g. 'ale', 'ketchup')..." class="flex-1 px-3 py-2 border border-stone-300 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-[#721c24]">
+            <button onclick="handleSmartQuickAdd()" class="bg-[#721c24] hover:bg-[#58131b] text-amber-100 font-bold px-4 py-2 rounded-lg text-xs uppercase transition shadow font-pub-header">
               Auto-Add
             </button>
           </div>
@@ -213,15 +221,15 @@
       </div>
 
       <!-- Search & Sort Controls Toolbar -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3 justify-between items-center">
+      <div class="bg-[#fdfbf7] p-4 rounded-2xl border-2 border-[#d4c3ab] shadow-sm flex flex-col sm:flex-row gap-3 justify-between items-center">
         <div class="relative w-full sm:w-72">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-          <input type="text" id="inventory-search" oninput="renderInventoryGrid()" placeholder="Search logged items..." class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-600">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-stone-400 text-xs"></i>
+          <input type="text" id="inventory-search" oninput="renderInventoryGrid()" placeholder="Search larder provisions..." class="w-full pl-8 pr-3 py-2 bg-white border border-stone-300 rounded-lg text-xs font-semibold text-stone-900 outline-none focus:ring-2 focus:ring-[#721c24]">
         </div>
 
         <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-          <label class="text-xs font-bold text-slate-600 whitespace-nowrap"><i class="fa-solid fa-arrow-down-a-z mr-1"></i> Sort:</label>
-          <select id="inventory-sort" onchange="renderInventoryGrid()" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-600">
+          <label class="text-xs font-bold text-stone-700 font-pub-header whitespace-nowrap"><i class="fa-solid fa-arrow-down-a-z mr-1"></i> Sort:</label>
+          <select id="inventory-sort" onchange="renderInventoryGrid()" class="px-3 py-2 bg-white border border-stone-300 rounded-lg text-xs font-semibold text-stone-900 outline-none focus:ring-2 focus:ring-[#721c24]">
             <option value="abc-asc">Alphabetical (A &rarr; Z)</option>
             <option value="abc-desc">Alphabetical (Z &rarr; A)</option>
             <option value="qty-desc">Quantity (High &rarr; Low)</option>
@@ -231,22 +239,22 @@
       </div>
 
       <!-- Shelf Zone Filters -->
-      <div class="flex flex-wrap gap-2 justify-between items-center border-b border-slate-200 pb-3">
-        <div class="flex flex-wrap gap-1 text-xs font-bold">
-          <button onclick="filterContainer('All')" id="btn-filter-All" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white">All Shelves</button>
-          <button onclick="filterContainer('Boxes')" id="btn-filter-Boxes" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">📦 Boxes</button>
-          <button onclick="filterContainer('Jars')" id="btn-filter-Jars" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🏺 Jars & Bottles</button>
-          <button onclick="filterContainer('Cans')" id="btn-filter-Cans" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🥫 Cans</button>
-          <button onclick="filterContainer('Bags')" id="btn-filter-Bags" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🛍️ Bags</button>
-          <button onclick="filterContainer('Fridge')" id="btn-filter-Fridge" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🧀 Fridge</button>
-          <button onclick="filterContainer('Freezer')" id="btn-filter-Freezer" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">❄️ Freezer</button>
+      <div class="flex flex-wrap gap-2 justify-between items-center border-b-2 border-stone-300 pb-3">
+        <div class="flex flex-wrap gap-1 text-xs font-bold font-pub-header">
+          <button onclick="filterContainer('All')" id="btn-filter-All" class="px-3 py-1.5 rounded-lg bg-[#2a140e] text-amber-200">All Shelves</button>
+          <button onclick="filterContainer('Boxes')" id="btn-filter-Boxes" class="px-3 py-1.5 rounded-lg bg-white border border-stone-300 text-stone-800 hover:bg-stone-100">📦 Boxes</button>
+          <button onclick="filterContainer('Jars')" id="btn-filter-Jars" class="px-3 py-1.5 rounded-lg bg-white border border-stone-300 text-stone-800 hover:bg-stone-100">🏺 Jars & Bottles</button>
+          <button onclick="filterContainer('Cans')" id="btn-filter-Cans" class="px-3 py-1.5 rounded-lg bg-white border border-stone-300 text-stone-800 hover:bg-stone-100">🥫 Cans</button>
+          <button onclick="filterContainer('Bags')" id="btn-filter-Bags" class="px-3 py-1.5 rounded-lg bg-white border border-stone-300 text-stone-800 hover:bg-stone-100">🛍️ Bags</button>
+          <button onclick="filterContainer('Fridge')" id="btn-filter-Fridge" class="px-3 py-1.5 rounded-lg bg-white border border-stone-300 text-stone-800 hover:bg-stone-100">🧀 Cold Cellar</button>
+          <button onclick="filterContainer('Freezer')" id="btn-filter-Freezer" class="px-3 py-1.5 rounded-lg bg-white border border-stone-300 text-stone-800 hover:bg-stone-100">❄️ Frost Vault</button>
         </div>
-        <div class="flex gap-2">
-          <button onclick="clearAllData()" class="text-xs font-bold text-rose-600 hover:text-rose-800">
-            Clear All Data
+        <div class="flex gap-3">
+          <button onclick="clearAllData()" class="text-xs font-bold text-rose-800 hover:text-rose-950 font-pub-header">
+            Clear Ledger
           </button>
-          <button onclick="openCustomItemModal()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
-            + Manual Item Config
+          <button onclick="openCustomItemModal()" class="text-xs font-bold text-[#721c24] hover:text-[#58131b] font-pub-header">
+            + Manual Provision Config
           </button>
         </div>
       </div>
@@ -254,35 +262,35 @@
       <div id="inventory-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </section>
 
-    <!-- TAB 2: MEAL PLANNER -->
+    <!-- TAB 2: FEAST PLANNER -->
     <section id="tab-planner" class="hidden space-y-6">
       
-      <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl text-xs font-semibold text-slate-800 flex justify-between items-center">
-        <span>STEP 2: Check off meals with a green "$0 READY" badge. Click below to deduct ingredients as you cook!</span>
-        <button onclick="switchTab('synthesizer')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs">NEXT: STEP 3 &rarr;</button>
+      <div class="bg-[#f7efe3] border-2 border-[#b8860b]/60 p-4 rounded-xl text-xs font-semibold text-stone-800 flex justify-between items-center shadow-inner">
+        <span class="font-pub-body font-bold text-sm">STEP 2: Select feasts marked with green "$0 READY". Click below to deduct provisions as cooked!</span>
+        <button onclick="switchTab('synthesizer')" class="bg-[#2a140e] text-amber-200 font-bold px-3.5 py-2 rounded-lg text-xs font-pub-header border border-amber-600/40">NEXT: STEP 3 &rarr;</button>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+        <div class="bg-[#fdfbf7] p-5 rounded-2xl border-2 border-[#d4c3ab] space-y-4 shadow-sm">
           <div class="flex justify-between items-center border-b pb-2">
-            <h2 class="font-bold text-sm text-slate-900 uppercase">Meal Options</h2>
-            <span id="ready-count-badge" class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">0 Ready</span>
+            <h2 class="font-black text-sm text-[#2a140e] font-pub-header uppercase">Tavern Feast Menu</h2>
+            <span id="ready-count-badge" class="text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-0.5 rounded-full font-pub-header">0 Ready</span>
           </div>
 
           <div id="planner-recipe-list" class="space-y-2 max-h-[400px] overflow-y-auto pr-1"></div>
 
-          <button onclick="deductSelectedMeals()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition shadow">
-            Cook Meals (Deduct from Stock)
+          <button onclick="deductSelectedMeals()" class="w-full py-3 bg-emerald-800 hover:bg-emerald-900 text-emerald-100 font-bold rounded-xl text-xs uppercase tracking-wider transition shadow font-pub-header border border-emerald-600/40">
+            Cook Feast (Deduct Cellar Stock)
           </button>
         </div>
 
-        <div class="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+        <div class="lg:col-span-2 bg-[#fdfbf7] p-5 rounded-2xl border-2 border-[#d4c3ab] space-y-4 shadow-sm">
           <div class="flex justify-between items-center border-b pb-3">
             <div>
-              <h2 class="font-bold text-sm text-slate-900 uppercase">Missing Ingredients (To Buy)</h2>
-              <p class="text-xs text-slate-500">Only shows items you don't own yet for selected meals.</p>
+              <h2 class="font-black text-sm text-[#2a140e] font-pub-header uppercase">Missing Merchant Provisions (To Buy)</h2>
+              <p class="text-xs text-stone-600 font-pub-body">Required market items not found in current cellar stock.</p>
             </div>
-            <span id="total-shopping-cost" class="font-black text-base text-emerald-600">$0.00</span>
+            <span id="total-shopping-cost" class="font-black text-lg text-emerald-800 font-pub-header">$0.00</span>
           </div>
 
           <div id="net-shopping-container" class="space-y-2"></div>
@@ -290,42 +298,42 @@
       </div>
     </section>
 
-    <!-- TAB 3: AI RECIPE PROMPT SYNTHESIZER -->
+    <!-- TAB 3: KITCHEN ALCHEMY SYNTHESIZER -->
     <section id="tab-synthesizer" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+      <div class="bg-[#fdfbf7] p-6 rounded-2xl border-2 border-[#d4c3ab] space-y-4 shadow-sm">
         <div>
-          <h2 class="font-bold text-base text-slate-900 uppercase">STEP 3: AI Recipe Prompt Generator</h2>
-          <p class="text-xs text-slate-500 mt-1">Generates a copyable prompt listing your exact remaining food for ChatGPT or Gemini!</p>
+          <h2 class="font-black text-base text-[#2a140e] font-pub-header uppercase">STEP 3: Kitchen Alchemy Prompt Generator</h2>
+          <p class="text-xs text-stone-600 font-pub-body mt-1">Generates a copyable tavern scroll prompt listing 100% of your remaining cellar stock for ChatGPT or Gemini!</p>
         </div>
 
-        <button onclick="generatePantryRaidPrompt()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-3 rounded-xl text-xs uppercase tracking-wider shadow transition">
-          Generate Prompt Now
+        <button onclick="generatePantryRaidPrompt()" class="bg-[#721c24] hover:bg-[#58131b] text-amber-100 font-bold px-5 py-3 rounded-xl text-xs uppercase tracking-wider shadow transition font-pub-header border border-amber-600/30">
+          Synthesize Alchemy Scroll Now
         </button>
 
         <div class="space-y-2">
-          <label class="block text-xs font-bold text-slate-700 uppercase">Copy this text into ChatGPT or Gemini:</label>
-          <textarea id="synthesizer-output" rows="8" readonly class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs text-slate-800 outline-none"></textarea>
+          <label class="block text-xs font-bold text-stone-700 font-pub-header uppercase">Copy this scroll text into ChatGPT or Gemini:</label>
+          <textarea id="synthesizer-output" rows="8" readonly class="w-full p-3 bg-[#f7efe3] border border-[#d4c3ab] rounded-xl font-mono text-xs text-stone-900 outline-none"></textarea>
         </div>
 
-        <button onclick="copySynthesizerPrompt()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase shadow">
-          Copy to Clipboard
+        <button onclick="copySynthesizerPrompt()" class="bg-[#2a140e] hover:bg-[#1a0c09] text-amber-200 font-bold px-4 py-2 rounded-xl text-xs uppercase shadow font-pub-header border border-amber-600/30">
+          Copy Scroll to Clipboard
         </button>
       </div>
     </section>
 
-    <!-- TAB 4: RECIPE LIBRARY -->
+    <!-- TAB 4: COOKERY BOOK (RECIPE LIBRARY) -->
     <section id="tab-recipes" class="hidden space-y-6">
-      <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+      <div class="bg-[#fdfbf7] p-6 rounded-2xl border-2 border-[#d4c3ab] space-y-4 shadow-sm">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-2">
           <div>
-            <h2 class="font-bold text-base text-slate-900 uppercase">Recipe Library</h2>
-            <p class="text-xs text-slate-500">Manage family recipes and custom imported meals</p>
+            <h2 class="font-black text-base text-[#2a140e] font-pub-header uppercase">Tavern Cookery Book</h2>
+            <p class="text-xs text-stone-600 font-pub-body">Manage house feast recipes and custom imported culinary guides</p>
           </div>
-          <div class="flex gap-2">
-            <button onclick="openRecipeImportModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase shadow transition flex items-center gap-1.5">
+          <div class="flex gap-2 font-pub-header">
+            <button onclick="openRecipeImportModal()" class="bg-[#721c24] hover:bg-[#58131b] text-amber-100 font-bold px-4 py-2 rounded-xl text-xs uppercase shadow transition flex items-center gap-1.5 border border-amber-600/30">
               <i class="fa-solid fa-file-import"></i> Import Recipe Text / URL
             </button>
-            <button onclick="openCustomRecipeModal()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 self-center">
+            <button onclick="openCustomRecipeModal()" class="text-xs font-bold text-[#721c24] hover:text-[#58131b] self-center">
               + Add New Recipe
             </button>
           </div>
@@ -336,109 +344,108 @@
 
   </main>
 
-  <!-- PAGE LOAD ACTION POP-UP MODAL -->
-  <div id="welcome-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-5 border border-slate-200">
-      <div class="border-b pb-3">
-        <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider block">Queensbury Manor Command</span>
-        <h2 class="text-lg font-black text-slate-900 mt-1 uppercase">What do you want to do today?</h2>
+  <!-- WELCOME / COMMAND MODAL -->
+  <div id="welcome-modal" class="fixed inset-0 bg-stone-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-[#fdfbf7] max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-5 border-4 border-[#b8860b]">
+      <div class="border-b-2 border-stone-200 pb-3">
+        <span class="text-xs font-bold text-[#721c24] font-pub-header uppercase tracking-wider block">Queensbury Arms Command</span>
+        <h2 class="text-xl font-black text-[#2a140e] font-pub-header mt-1 uppercase">What task shall we perform today?</h2>
       </div>
 
-      <div class="space-y-2.5">
-        <button onclick="handleGuidedAction('inventory')" class="w-full p-3.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl text-left flex items-center gap-3 transition group">
-          <div class="w-10 h-10 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-lg shrink-0">
+      <div class="space-y-2.5 font-pub-header">
+        <button onclick="handleGuidedAction('inventory')" class="w-full p-3.5 bg-[#f7efe3] hover:bg-amber-100/60 border border-[#d4c3ab] rounded-xl text-left flex items-center gap-3 transition group">
+          <div class="w-10 h-10 bg-[#721c24] text-amber-200 rounded-lg flex items-center justify-center text-lg shrink-0">
             <i class="fa-solid fa-boxes-stacked"></i>
           </div>
           <div>
-            <div class="font-bold text-sm text-slate-900">1. Log / Stock Pantry Inventory</div>
-            <div class="text-xs text-slate-500">Scan Jars, Bottles, Cans, Boxes, and Bags using fast entry.</div>
+            <div class="font-bold text-sm text-[#2a140e]">1. Audit Cellar & Larder Stock</div>
+            <div class="text-xs text-stone-600 font-pub-body">Log barrels, jars, bottles, cans, and sacks using fast entry.</div>
           </div>
         </button>
 
-        <button onclick="handleGuidedAction('planner')" class="w-full p-3.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-left flex items-center gap-3 transition group">
-          <div class="w-10 h-10 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-lg shrink-0">
-            <i class="fa-solid fa-calendar-check"></i>
+        <button onclick="handleGuidedAction('planner')" class="w-full p-3.5 bg-emerald-50 hover:bg-emerald-100/60 border border-emerald-200 rounded-xl text-left flex items-center gap-3 transition group">
+          <div class="w-10 h-10 bg-emerald-800 text-emerald-100 rounded-lg flex items-center justify-center text-lg shrink-0">
+            <i class="fa-solid fa-utensils"></i>
           </div>
           <div>
-            <div class="font-bold text-sm text-slate-900">2. Plan Meals ($0 On-Hand Food)</div>
-            <div class="text-xs text-slate-500">Pick $0.00 meals & deduct food as you cook.</div>
+            <div class="font-bold text-sm text-stone-900">2. Plan Feasts ($0 On-Hand Provisions)</div>
+            <div class="text-xs text-stone-600 font-pub-body">Pick $0.00 feasts & deduct cellar stock as you cook.</div>
           </div>
         </button>
 
-        <button onclick="handleGuidedAction('synthesizer')" class="w-full p-3.5 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl text-left flex items-center gap-3 transition group">
-          <div class="w-10 h-10 bg-purple-600 text-white rounded-lg flex items-center justify-center text-lg shrink-0">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <button onclick="handleGuidedAction('synthesizer')" class="w-full p-3.5 bg-amber-50 hover:bg-amber-100/60 border border-amber-200 rounded-xl text-left flex items-center gap-3 transition group">
+          <div class="w-10 h-10 bg-[#2a140e] text-amber-200 rounded-lg flex items-center justify-center text-lg shrink-0">
+            <i class="fa-solid fa-scroll"></i>
           </div>
           <div>
-            <div class="font-bold text-sm text-slate-900">3. Get AI Ideas for Leftover Food</div>
-            <div class="text-xs text-slate-500">Synthesize recipe prompts for remaining random food.</div>
+            <div class="font-bold text-sm text-stone-900">3. Kitchen Alchemy Scroll</div>
+            <div class="text-xs text-stone-600 font-pub-body">Synthesize recipe prompts for remaining random cellar stock.</div>
           </div>
         </button>
 
-        <button onclick="handleGuidedAction('add-recipe')" class="w-full p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-left flex items-center gap-3 transition group">
-          <div class="w-10 h-10 bg-slate-800 text-white rounded-lg flex items-center justify-center text-lg shrink-0">
+        <button onclick="handleGuidedAction('add-recipe')" class="w-full p-3.5 bg-stone-100 hover:bg-stone-200/80 border border-stone-300 rounded-xl text-left flex items-center gap-3 transition group">
+          <div class="w-10 h-10 bg-stone-800 text-white rounded-lg flex items-center justify-center text-lg shrink-0">
             <i class="fa-solid fa-plus-circle"></i>
           </div>
           <div>
-            <div class="font-bold text-sm text-slate-900">4. Add a New Recipe to Library</div>
-            <div class="text-xs text-slate-500">Create custom family recipes with ingredients.</div>
+            <div class="font-bold text-sm text-stone-900">4. Add Recipe to Cookery Book</div>
+            <div class="text-xs text-stone-600 font-pub-body">Create custom family tavern recipes with ingredients.</div>
           </div>
         </button>
       </div>
 
-      <div class="border-t pt-3 flex justify-between items-center">
-        <span class="text-xs text-slate-500">Choose an option to jump right in!</span>
-        <button onclick="closeWelcomeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition">Just Explore</button>
+      <div class="border-t-2 border-stone-200 pt-3 flex justify-between items-center font-pub-header">
+        <span class="text-xs text-stone-600">Select a path to proceed</span>
+        <button onclick="closeWelcomeModal()" class="px-4 py-2 bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold text-xs rounded-lg transition">Explore Tavern</button>
       </div>
     </div>
   </div>
 
   <!-- GROCERY RECEIPT IMPORT MODAL (WITH IMAGE UPLOAD / CAMERA OCR) -->
-  <div id="receipt-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-4 border border-slate-200">
-      <div class="flex justify-between items-center border-b pb-2">
-        <h3 class="font-bold text-base text-slate-900 uppercase flex items-center gap-2">
-          <i class="fa-solid fa-receipt text-emerald-600"></i> Import Grocery Receipt
+  <div id="receipt-modal" class="fixed inset-0 bg-stone-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-[#fdfbf7] max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-4 border-4 border-[#b8860b]">
+      <div class="flex justify-between items-center border-b-2 border-stone-200 pb-2">
+        <h3 class="font-black text-base text-[#2a140e] font-pub-header uppercase flex items-center gap-2">
+          <i class="fa-solid fa-receipt text-emerald-800"></i> Import Merchant Receipt
         </h3>
-        <button onclick="closeReceiptModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+        <button onclick="closeReceiptModal()" class="text-stone-400 hover:text-stone-700 font-bold text-lg">&times;</button>
       </div>
 
-      <p class="text-xs text-slate-500">Upload a receipt photo/scan or paste receipt text directly. The importer cleans up store codes and auto-detects shelf categories!</p>
+      <p class="text-xs text-stone-600 font-pub-body">Upload a receipt photo/scan or paste text directly. The importer cleans up codes, size numbers, and auto-detects shelf categories!</p>
 
-      <!-- Explicit Attachment / Image File Upload Input -->
-      <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl p-4 text-center space-y-2">
-        <i class="fa-solid fa-cloud-arrow-up text-2xl text-emerald-600"></i>
-        <div class="text-xs font-bold text-slate-800">Upload Receipt Photo or Scan</div>
-        <p class="text-[10px] text-slate-400">Select an image file or take a photo with your camera</p>
+      <div class="bg-[#f7efe3] border-2 border-dashed border-[#b8860b]/60 rounded-xl p-4 text-center space-y-2">
+        <i class="fa-solid fa-cloud-arrow-up text-2xl text-[#721c24]"></i>
+        <div class="text-xs font-bold text-stone-900 font-pub-header">Upload Receipt Photo or Scan</div>
+        <p class="text-[10px] text-stone-500 font-pub-body">Select an image file or capture a photo with your camera</p>
         
         <input type="file" id="receipt-file-input" accept="image/*" capture="environment" onchange="handleReceiptImageUpload(event)" class="hidden">
         
-        <button type="button" onclick="document.getElementById('receipt-file-input').click()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition inline-flex items-center gap-2">
+        <button type="button" onclick="document.getElementById('receipt-file-input').click()" class="bg-[#2a140e] hover:bg-[#1a0c09] text-amber-200 font-bold px-4 py-2 rounded-lg text-xs shadow transition inline-flex items-center gap-2 font-pub-header border border-amber-600/30">
           <i class="fa-solid fa-camera"></i> Select Photo / Capture Image
         </button>
 
-        <div id="ocr-status" class="text-xs font-semibold text-indigo-600 hidden pt-1">
-          <i class="fa-solid fa-spinner fa-spin mr-1"></i> Scanning image for receipt text...
+        <div id="ocr-status" class="text-xs font-semibold text-[#721c24] hidden pt-1 font-pub-header">
+          <i class="fa-solid fa-spinner fa-spin mr-1"></i> Scanning image for merchant receipt text...
         </div>
       </div>
 
       <div class="relative flex py-1 items-center">
-        <div class="flex-grow border-t border-slate-200"></div>
-        <span class="flex-shrink mx-3 text-[10px] font-bold text-slate-400 uppercase">Or Paste Text Line Items</span>
-        <div class="flex-grow border-t border-slate-200"></div>
+        <div class="flex-grow border-t border-stone-300"></div>
+        <span class="flex-shrink mx-3 text-[10px] font-bold text-stone-500 font-pub-header uppercase">Or Paste Line Items</span>
+        <div class="flex-grow border-t border-stone-300"></div>
       </div>
 
       <div>
-        <textarea id="receipt-text-input" rows="6" placeholder="Paste receipt lines here, e.g.:
+        <textarea id="receipt-text-input" rows="5" placeholder="Paste receipt lines here, e.g.:
 1 BLACK BEANS $0.99
 2 PASTA, RIGATONI 16OZ $1.49
 SPAGHETTI SAUCE 24OZ
-RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs text-slate-800 outline-none focus:ring-2 focus:ring-emerald-600"></textarea>
+RICE, MED GRAIN 2LBS" class="w-full p-3 bg-[#f7efe3] border border-[#d4c3ab] rounded-xl font-mono text-xs text-stone-900 outline-none focus:ring-2 focus:ring-[#721c24]"></textarea>
       </div>
 
-      <div class="flex justify-end gap-2 pt-2 border-t">
-        <button type="button" onclick="closeReceiptModal()" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold text-xs rounded-lg">Cancel</button>
-        <button onclick="parseAndImportReceipt()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg uppercase shadow">
+      <div class="flex justify-end gap-2 pt-2 border-t-2 border-stone-200 font-pub-header">
+        <button type="button" onclick="closeReceiptModal()" class="px-4 py-2 bg-stone-200 text-stone-700 font-bold text-xs rounded-lg">Cancel</button>
+        <button onclick="parseAndImportReceipt()" class="px-5 py-2 bg-emerald-800 hover:bg-emerald-900 text-emerald-100 font-bold text-xs rounded-lg uppercase shadow border border-emerald-600/30">
           Bulk Import Items &rarr;
         </button>
       </div>
@@ -446,32 +453,32 @@ RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 roun
   </div>
 
   <!-- RECIPE IMPORT MODAL -->
-  <div id="recipe-import-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-4 border border-slate-200">
-      <div class="flex justify-between items-center border-b pb-2">
-        <h3 class="font-bold text-base text-slate-900 uppercase flex items-center gap-2">
-          <i class="fa-solid fa-file-import text-indigo-600"></i> Import Recipe Text or Web Page
+  <div id="recipe-import-modal" class="fixed inset-0 bg-stone-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-[#fdfbf7] max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-4 border-4 border-[#b8860b]">
+      <div class="flex justify-between items-center border-b-2 border-stone-200 pb-2">
+        <h3 class="font-black text-base text-[#2a140e] font-pub-header uppercase flex items-center gap-2">
+          <i class="fa-solid fa-file-import text-[#721c24]"></i> Import Recipe Text or Web Page
         </h3>
-        <button onclick="closeRecipeImportModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+        <button onclick="closeRecipeImportModal()" class="text-stone-400 hover:text-stone-700 font-bold text-lg">&times;</button>
       </div>
 
-      <p class="text-xs text-slate-500">Paste recipe text, an ingredient list, or scraped text from a web page URL. The parser extracts the recipe title and ingredient lines automatically!</p>
+      <p class="text-xs text-stone-600 font-pub-body">Paste recipe text, an ingredient list, or scraped text from a web page URL. The parser extracts the title and ingredients automatically!</p>
 
       <div>
-        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Recipe Name (Optional Title Override)</label>
-        <input type="text" id="import-recipe-title" placeholder="e.g. Grandma's Chili Casserole" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold outline-none mb-3">
+        <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase mb-1">Recipe Title (Optional Override)</label>
+        <input type="text" id="import-recipe-title" placeholder="e.g. Tavern Shepherd's Pie" class="w-full px-3 py-2 bg-[#f7efe3] border border-[#d4c3ab] rounded-lg text-xs font-semibold outline-none mb-3">
 
-        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Recipe Content / Ingredients</label>
-        <textarea id="import-recipe-text" rows="7" placeholder="Paste ingredients or text here, e.g.:
+        <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase mb-1">Recipe Content / Ingredients</label>
+        <textarea id="import-recipe-text" rows="6" placeholder="Paste ingredients or text here, e.g.:
 15 oz Black Beans
 16 oz Rigatoni Pasta
 24 oz Spaghetti Sauce
-1 cup Cheddar Cheese" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs text-slate-800 outline-none focus:ring-2 focus:ring-indigo-600"></textarea>
+1 cup Cheddar Cheese" class="w-full p-3 bg-[#f7efe3] border border-[#d4c3ab] rounded-xl font-mono text-xs text-stone-900 outline-none focus:ring-2 focus:ring-[#721c24]"></textarea>
       </div>
 
-      <div class="flex justify-end gap-2 pt-2 border-t">
-        <button type="button" onclick="closeRecipeImportModal()" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold text-xs rounded-lg">Cancel</button>
-        <button onclick="parseAndImportRecipeText()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg uppercase shadow">
+      <div class="flex justify-end gap-2 pt-2 border-t-2 border-stone-200 font-pub-header">
+        <button type="button" onclick="closeRecipeImportModal()" class="px-4 py-2 bg-stone-200 text-stone-700 font-bold text-xs rounded-lg">Cancel</button>
+        <button onclick="parseAndImportRecipeText()" class="px-5 py-2 bg-[#721c24] hover:bg-[#58131b] text-amber-100 font-bold text-xs rounded-lg uppercase shadow border border-amber-600/30">
           Import Recipe &rarr;
         </button>
       </div>
@@ -479,74 +486,74 @@ RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 roun
   </div>
 
   <!-- Manual Custom Item Modal -->
-  <div id="item-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl space-y-4 border border-slate-200">
-      <h3 class="font-bold text-base text-slate-900 uppercase border-b pb-2">Add Item Manually</h3>
+  <div id="item-modal" class="fixed inset-0 bg-stone-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-[#fdfbf7] max-w-md w-full p-6 rounded-2xl shadow-xl space-y-4 border-4 border-[#b8860b]">
+      <h3 class="font-black text-base text-[#2a140e] font-pub-header uppercase border-b-2 border-stone-200 pb-2">Add Provision Manually</h3>
       <form id="item-form" onsubmit="handleSaveCustomItem(event)" class="space-y-3">
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Item Name</label>
-          <input type="text" id="modal-name" required placeholder="e.g. Salsa" class="w-full px-3 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-600">
+          <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase mb-1">Provision Name</label>
+          <input type="text" id="modal-name" required placeholder="e.g. Salsa" class="w-full px-3 py-2 bg-[#f7efe3] border border-[#d4c3ab] rounded-lg text-sm font-semibold outline-none focus:ring-2 focus:ring-[#721c24]">
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Shelf Zone</label>
-            <select id="modal-zone" class="w-full px-2 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+            <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase mb-1">Cellar Zone</label>
+            <select id="modal-zone" class="w-full px-2 py-2 bg-[#f7efe3] border border-[#d4c3ab] rounded-lg text-sm font-semibold outline-none">
               <option value="Boxes">📦 Boxes</option>
               <option value="Jars">🏺 Jars & Bottles</option>
               <option value="Cans">🥫 Cans</option>
               <option value="Bags">🛍️ Bags</option>
-              <option value="Fridge">🧀 Fridge</option>
-              <option value="Freezer">❄️ Freezer</option>
+              <option value="Fridge">🧀 Cold Cellar</option>
+              <option value="Freezer">❄️ Frost Vault</option>
             </select>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Unit</label>
-            <input type="text" id="modal-unit" required placeholder="bottle, jar, can, oz" class="w-full px-3 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+            <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase mb-1">Unit</label>
+            <input type="text" id="modal-unit" required placeholder="bottle, jar, can, oz" class="w-full px-3 py-2 bg-[#f7efe3] border border-[#d4c3ab] rounded-lg text-sm font-semibold outline-none">
           </div>
         </div>
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">In Stock</label>
-            <input type="number" step="0.01" id="modal-stock" value="1" required class="w-full px-2 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+            <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase mb-1">In Stock</label>
+            <input type="number" step="0.01" id="modal-stock" value="1" required class="w-full px-2 py-2 bg-[#f7efe3] border border-[#d4c3ab] rounded-lg text-sm font-semibold outline-none">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Pkg Size</label>
-            <input type="number" step="0.01" id="modal-pkg-size" value="1" required class="w-full px-2 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+            <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase mb-1">Pkg Size</label>
+            <input type="number" step="0.01" id="modal-pkg-size" value="1" required class="w-full px-2 py-2 bg-[#f7efe3] border border-[#d4c3ab] rounded-lg text-sm font-semibold outline-none">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Price ($)</label>
-            <input type="number" step="0.01" id="modal-price" value="1.99" required class="w-full px-2 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+            <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase mb-1">Price ($)</label>
+            <input type="number" step="0.01" id="modal-price" value="1.99" required class="w-full px-2 py-2 bg-[#f7efe3] border border-[#d4c3ab] rounded-lg text-sm font-semibold outline-none">
           </div>
         </div>
-        <div class="flex justify-end gap-2 pt-2 border-t">
-          <button type="button" onclick="closeCustomItemModal()" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold text-xs rounded-lg">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg">Save Item</button>
+        <div class="flex justify-end gap-2 pt-2 border-t-2 border-stone-200 font-pub-header">
+          <button type="button" onclick="closeCustomItemModal()" class="px-4 py-2 bg-stone-200 text-stone-700 font-bold text-xs rounded-lg">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-[#721c24] text-amber-100 font-bold text-xs rounded-lg border border-amber-600/30">Save Provision</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Recipe Modal -->
-  <div id="recipe-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl space-y-4 border border-slate-200">
-      <h3 class="font-bold text-base text-slate-900 uppercase border-b pb-2">Add New Recipe</h3>
+  <div id="recipe-modal" class="fixed inset-0 bg-stone-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-[#fdfbf7] max-w-md w-full p-6 rounded-2xl shadow-xl space-y-4 border-4 border-[#b8860b]">
+      <h3 class="font-black text-base text-[#2a140e] font-pub-header uppercase border-b-2 border-stone-200 pb-2">Add Feast Recipe</h3>
       <form id="recipe-form" onsubmit="handleSaveCustomRecipe(event)" class="space-y-3">
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Recipe Name</label>
-          <input type="text" id="recipe-modal-name" required placeholder="e.g. Chili Casserole" class="w-full px-3 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none focus:ring-2 focus:ring-indigo-600">
+          <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase mb-1">Recipe Name</label>
+          <input type="text" id="recipe-modal-name" required placeholder="e.g. Chili Casserole" class="w-full px-3 py-2 bg-[#f7efe3] border border-[#d4c3ab] rounded-lg text-sm font-semibold outline-none focus:ring-2 focus:ring-[#721c24]">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Base Servings</label>
-          <input type="number" id="recipe-modal-servings" value="4" min="1" required class="w-full px-3 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+          <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase mb-1">Base Servings</label>
+          <input type="number" id="recipe-modal-servings" value="4" min="1" required class="w-full px-3 py-2 bg-[#f7efe3] border border-[#d4c3ab] rounded-lg text-sm font-semibold outline-none">
         </div>
-        <div class="space-y-2 border-t pt-2">
-          <label class="block text-xs font-bold text-slate-600">Ingredients Required</label>
+        <div class="space-y-2 border-t-2 border-stone-200 pt-2">
+          <label class="block text-xs font-bold text-stone-800 font-pub-header uppercase">Ingredients Required</label>
           <div id="recipe-ingredient-rows" class="space-y-2"></div>
-          <button type="button" onclick="addRecipeIngredientRow()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">+ Add Ingredient Row</button>
+          <button type="button" onclick="addRecipeIngredientRow()" class="text-xs font-bold text-[#721c24] hover:text-[#58131b] font-pub-header">+ Add Ingredient Row</button>
         </div>
-        <div class="flex justify-end gap-2 pt-2 border-t">
-          <button type="button" onclick="closeCustomRecipeModal()" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold text-xs rounded-lg">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg">Save Recipe</button>
+        <div class="flex justify-end gap-2 pt-2 border-t-2 border-stone-200 font-pub-header">
+          <button type="button" onclick="closeCustomRecipeModal()" class="px-4 py-2 bg-stone-200 text-stone-700 font-bold text-xs rounded-lg">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-[#721c24] text-amber-100 font-bold text-xs rounded-lg border border-amber-600/30">Save Recipe</button>
         </div>
       </form>
     </div>
@@ -637,7 +644,7 @@ RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 roun
     }
 
     function clearAllData() {
-      if (confirm("Are you sure you want to clear all inventory items and start completely fresh?")) {
+      if (confirm("Are you sure you want to clear all larder items and start completely fresh?")) {
         inventory = [];
         recipes = [];
         plannerState = {};
@@ -667,7 +674,6 @@ RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 roun
     function openRecipeImportModal() { document.getElementById('recipe-import-modal').classList.remove('hidden'); }
     function closeRecipeImportModal() { document.getElementById('recipe-import-modal').classList.add('hidden'); }
 
-    // --- RECEIPT IMAGE UPLOAD & OCR READER ---
     function handleReceiptImageUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -679,11 +685,11 @@ RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 roun
         .then(({ data: { text } }) => {
           statusEl.classList.add('hidden');
           document.getElementById('receipt-text-input').value = text;
-          alert("Receipt image scanned! Review the text below and click Bulk Import Items.");
+          alert("Merchant receipt scanned! Review text below and click Bulk Import Items.");
         })
         .catch(err => {
           statusEl.classList.add('hidden');
-          alert("Failed to scan receipt photo. Please try pasting the text manually.");
+          alert("Failed to scan image photo. Please paste text manually.");
           console.error(err);
         });
     }
@@ -718,7 +724,7 @@ RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 roun
       });
 
       if (ingredients.length === 0) {
-        alert("Could not extract ingredients. Please check the text format!");
+        alert("Could not extract ingredients. Please check text format!");
         return;
       }
 
@@ -737,7 +743,7 @@ RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 roun
       closeRecipeImportModal();
       document.getElementById('import-recipe-text').value = '';
       document.getElementById('import-recipe-title').value = '';
-      alert(`Imported recipe "${extractedTitle}" with ${ingredients.length} ingredients!`);
+      alert(`Imported feast "${extractedTitle}" with ${ingredients.length} ingredients!`);
     }
 
     function parseAndImportReceipt() {
@@ -793,9 +799,9 @@ RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 roun
         renderAll();
         closeReceiptModal();
         document.getElementById('receipt-text-input').value = '';
-        alert(`Successfully imported ${importedCount} item(s) from receipt!`);
+        alert(`Successfully imported ${importedCount} provision(s) from receipt!`);
       } else {
-        alert("Could not extract valid item lines. Please check the text and try again.");
+        alert("Could not extract valid item lines. Please check text and try again.");
       }
     }
 
@@ -1001,9 +1007,9 @@ RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 roun
       if (count > 0) {
         saveData();
         renderAll();
-        alert(`Cooked ${count} meal(s)!\n\nIngredients Deducted from Stock:\n` + deductedLog.join('\n'));
+        alert(`Cooked ${count} feast(s)!\n\nProvisions Deducted from Cellar:\n` + deductedLog.join('\n'));
       } else {
-        alert("Select at least one meal in the planner first!");
+        alert("Select at least one feast in planner first!");
       }
     }
 
@@ -1011,7 +1017,7 @@ RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 roun
       const masterStock = inventory.filter(item => parseFloat(item.inStock) > 0);
 
       if (masterStock.length === 0) {
-        document.getElementById('synthesizer-output').value = "No pantry stock logged yet! Log items under 'Pantry Stock' first.";
+        document.getElementById('synthesizer-output').value = "No cellar provisions logged yet! Log items under 'Larder Stock' first.";
         return;
       }
 
@@ -1033,7 +1039,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       const textarea = document.getElementById('synthesizer-output');
       textarea.select();
       document.execCommand('copy');
-      alert("Prompt copied to clipboard!");
+      alert("Alchemy scroll text copied to clipboard!");
     }
 
     function renderAll() {
@@ -1059,14 +1065,14 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       for (let i = 1; i <= 14; i++) {
         const heart = document.createElement('i');
         if (i <= fundedDays) {
-          heart.className = "fa-solid fa-heart text-rose-500 drop-shadow-sm";
+          heart.className = "fa-solid fa-heart text-rose-700 drop-shadow-sm";
         } else {
-          heart.className = "fa-regular fa-heart text-slate-300";
+          heart.className = "fa-regular fa-heart text-stone-300";
         }
         heartsContainer.appendChild(heart);
       }
 
-      document.getElementById('dash-inv-count').textContent = `${inventory.length} Items`;
+      document.getElementById('dash-inv-count').textContent = `${inventory.length} Provisions`;
       
       let readyCount = 0;
       recipes.forEach(r => { if (checkMealReadiness(r)) readyCount++; });
@@ -1075,26 +1081,26 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       const netList = calculateNetShopping();
       let grandCost = 0;
       netList.forEach(item => grandCost += item.cost);
-      document.getElementById('dash-rupee-cost').textContent = `$${grandCost.toFixed(2)} Store Cost`;
+      document.getElementById('dash-rupee-cost').textContent = `$${grandCost.toFixed(2)} Town Market Deficit`;
 
       const stepTitleEl = document.getElementById('dash-step-title');
       const directiveTextEl = document.getElementById('dash-directive-text');
       const actionBtnEl = document.getElementById('dash-action-btn');
 
       if (inventory.length === 0) {
-        stepTitleEl.textContent = "What to do next:";
-        directiveTextEl.textContent = '"Step 1: Go to Pantry Stock and log your real shelf items."';
-        actionBtnEl.textContent = "Open Pantry Stock ->";
+        stepTitleEl.textContent = "Tavern Keeper's Directive:";
+        directiveTextEl.textContent = '"First, inspect your cellar shelves and log your barrels, jars, and sacks!"';
+        actionBtnEl.textContent = "Open Larder Stock ->";
         actionBtnEl.onclick = function() { switchTab('inventory'); };
       } else if (fundedDays < 7) {
-        stepTitleEl.textContent = "What to do next:";
-        directiveTextEl.textContent = '"Step 2: Go to Meal Planner and check off $0.00 meals to cover your 14 days!"';
-        actionBtnEl.textContent = "Open Meal Planner ->";
+        stepTitleEl.textContent = "Tavern Keeper's Directive:";
+        directiveTextEl.textContent = '"Step 2: Go to Feast Planner and check off $0.00 feasts to cover 14 days!"';
+        actionBtnEl.textContent = "Open Feast Planner ->";
         actionBtnEl.onclick = function() { switchTab('planner'); };
       } else {
-        stepTitleEl.textContent = "What to do next:";
-        directiveTextEl.textContent = '"Step 3: Great progress! Use AI Recipe Generator for creative stretch ideas."';
-        actionBtnEl.textContent = "Open AI Generator ->";
+        stepTitleEl.textContent = "Tavern Keeper's Directive:";
+        directiveTextEl.textContent = '"Step 3: Great progress! Use Kitchen Alchemy Scroll for creative stretch ideas."';
+        actionBtnEl.textContent = "Open Alchemy Scroll ->";
         actionBtnEl.onclick = function() { switchTab('synthesizer'); };
       }
     }
@@ -1125,10 +1131,10 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
 
       if (items.length === 0) {
         container.innerHTML = `
-          <div class="col-span-full bg-white p-8 rounded-2xl border border-slate-200 text-center space-y-2">
-            <i class="fa-solid fa-box-open text-3xl text-slate-300"></i>
-            <p class="text-sm font-semibold text-slate-600">No items match your filter or search.</p>
-            <p class="text-xs text-slate-400">Try clearing your search bar or shelf filter above.</p>
+          <div class="col-span-full bg-[#fdfbf7] p-8 rounded-2xl border-2 border-[#d4c3ab] text-center space-y-2">
+            <i class="fa-solid fa-box-open text-3xl text-stone-300"></i>
+            <p class="text-sm font-bold text-stone-700 font-pub-header">No cellar provisions match your filter or search.</p>
+            <p class="text-xs text-stone-500 font-pub-body">Try clearing your search bar or cellar filter above.</p>
           </div>
         `;
         return;
@@ -1137,27 +1143,27 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       items.forEach((item) => {
         const zoneIcons = { Jars: '🏺', Cans: '🥫', Boxes: '📦', Bags: '🛍️', Fridge: '🧀', Freezer: '❄️' };
         const card = document.createElement('div');
-        card.className = "bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3";
+        card.className = "bg-[#fdfbf7] rounded-2xl p-4 border-2 border-[#d4c3ab] shadow-sm flex flex-col justify-between space-y-3";
 
         if (editingItemId === item.id) {
           card.innerHTML = `
             <div class="space-y-2">
               <div class="flex justify-between items-center border-b pb-1">
-                <span class="text-xs font-bold text-indigo-600 uppercase">Editing Item</span>
-                <button onclick="cancelInlineEdit()" class="text-slate-400 hover:text-slate-600 text-xs font-bold">&times;</button>
+                <span class="text-xs font-bold text-[#721c24] font-pub-header uppercase">Editing Provision</span>
+                <button onclick="cancelInlineEdit()" class="text-stone-400 hover:text-stone-700 text-xs font-bold">&times;</button>
               </div>
               <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase">Name</label>
-                <input type="text" id="edit-name-${item.id}" value="${item.name}" class="w-full px-2 py-1 border rounded text-xs font-semibold text-slate-900">
+                <label class="block text-[10px] font-bold text-stone-700 uppercase font-pub-header">Name</label>
+                <input type="text" id="edit-name-${item.id}" value="${item.name}" class="w-full px-2 py-1 border rounded text-xs font-semibold text-stone-900 bg-white">
               </div>
               <div class="grid grid-cols-3 gap-2">
                 <div>
-                  <label class="block text-[10px] font-bold text-slate-500 uppercase">Qty</label>
-                  <input type="number" id="edit-stock-${item.id}" value="${item.inStock}" class="w-full px-2 py-1 border rounded text-xs font-bold text-slate-900">
+                  <label class="block text-[10px] font-bold text-stone-700 uppercase font-pub-header">Qty</label>
+                  <input type="number" id="edit-stock-${item.id}" value="${item.inStock}" class="w-full px-2 py-1 border rounded text-xs font-bold text-stone-900 bg-white">
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold text-slate-500 uppercase">Unit</label>
-                  <select id="edit-unit-${item.id}" class="w-full px-1 py-1 border rounded text-xs font-semibold">
+                  <label class="block text-[10px] font-bold text-stone-700 uppercase font-pub-header">Unit</label>
+                  <select id="edit-unit-${item.id}" class="w-full px-1 py-1 border rounded text-xs font-semibold bg-white">
                     <option value="box" ${item.unit === 'box' ? 'selected' : ''}>box</option>
                     <option value="jar" ${item.unit === 'jar' ? 'selected' : ''}>jar</option>
                     <option value="bottle" ${item.unit === 'bottle' ? 'selected' : ''}>bottle</option>
@@ -1169,8 +1175,8 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold text-slate-500 uppercase">Zone</label>
-                  <select id="edit-zone-${item.id}" class="w-full px-1 py-1 border rounded text-xs font-semibold">
+                  <label class="block text-[10px] font-bold text-stone-700 uppercase font-pub-header">Zone</label>
+                  <select id="edit-zone-${item.id}" class="w-full px-1 py-1 border rounded text-xs font-semibold bg-white">
                     <option value="Boxes" ${item.zone === 'Boxes' ? 'selected' : ''}>Boxes</option>
                     <option value="Jars" ${item.zone === 'Jars' ? 'selected' : ''}>Jars</option>
                     <option value="Cans" ${item.zone === 'Cans' ? 'selected' : ''}>Cans</option>
@@ -1180,9 +1186,9 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
                   </select>
                 </div>
               </div>
-              <div class="flex justify-end gap-2 pt-2 border-t">
-                <button onclick="cancelInlineEdit()" class="px-2.5 py-1 bg-slate-100 text-slate-600 font-bold text-xs rounded">Cancel</button>
-                <button onclick="saveInlineEdit('${item.id}')" class="px-3 py-1 bg-indigo-600 text-white font-bold text-xs rounded shadow">Save</button>
+              <div class="flex justify-end gap-2 pt-2 border-t font-pub-header">
+                <button onclick="cancelInlineEdit()" class="px-2.5 py-1 bg-stone-200 text-stone-700 font-bold text-xs rounded">Cancel</button>
+                <button onclick="saveInlineEdit('${item.id}')" class="px-3 py-1 bg-[#721c24] text-amber-100 font-bold text-xs rounded shadow">Save</button>
               </div>
             </div>
           `;
@@ -1190,20 +1196,20 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
           card.innerHTML = `
             <div>
               <div class="flex justify-between items-start">
-                <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">${zoneIcons[item.zone] || '📦'} ${item.zone}</span>
+                <span class="text-xs font-bold bg-[#f7efe3] text-stone-800 px-2.5 py-1 rounded-full border border-[#d4c3ab] font-pub-header">${zoneIcons[item.zone] || '📦'} ${item.zone}</span>
                 <div class="flex items-center gap-1">
-                  <button onclick="enableInlineEdit('${item.id}')" class="text-slate-400 hover:text-indigo-600 text-xs p-1" title="Edit item"><i class="fa-solid fa-pen-to-square"></i></button>
-                  <button onclick="deleteInventoryItemById('${item.id}')" class="text-slate-400 hover:text-rose-600 text-xs p-1" title="Delete item"><i class="fa-solid fa-trash"></i></button>
+                  <button onclick="enableInlineEdit('${item.id}')" class="text-stone-400 hover:text-[#721c24] text-xs p-1" title="Edit provision"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button onclick="deleteInventoryItemById('${item.id}')" class="text-stone-400 hover:text-rose-700 text-xs p-1" title="Delete provision"><i class="fa-solid fa-trash"></i></button>
                 </div>
               </div>
-              <h3 class="font-bold text-slate-900 text-base mt-2">${item.name}</h3>
-              <p class="text-xs text-slate-500 mt-1">In Stock: <span class="font-bold text-indigo-600 text-sm">${item.inStock} ${item.unit}</span></p>
+              <h3 class="font-bold text-stone-900 text-base mt-2 font-pub-body">${item.name}</h3>
+              <p class="text-xs text-stone-600 mt-1 font-pub-body">In Stock: <span class="font-bold text-[#721c24] text-sm">${item.inStock} ${item.unit}</span></p>
             </div>
-            <div class="flex items-center justify-between border-t border-slate-100 pt-2">
-              <span class="text-xs text-slate-400 font-medium">$${item.price.toFixed(2)} / 1 ${item.unit}</span>
-              <div class="flex gap-1">
-                <button onclick="adjustStockById('${item.id}', -1)" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-800 text-sm flex items-center justify-center">-</button>
-                <button onclick="adjustStockById('${item.id}', 1)" class="w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm flex items-center justify-center shadow-sm">+</button>
+            <div class="flex items-center justify-between border-t border-stone-200 pt-2 font-pub-body">
+              <span class="text-xs text-stone-500 font-medium">$${item.price.toFixed(2)} / 1 ${item.unit}</span>
+              <div class="flex gap-1 font-pub-header">
+                <button onclick="adjustStockById('${item.id}', -1)" class="w-8 h-8 bg-stone-200 hover:bg-stone-300 rounded-lg font-bold text-stone-800 text-sm flex items-center justify-center">-</button>
+                <button onclick="adjustStockById('${item.id}', 1)" class="w-8 h-8 bg-[#721c24] hover:bg-[#58131b] text-amber-100 rounded-lg font-bold text-sm flex items-center justify-center shadow-sm">+</button>
               </div>
             </div>
           `;
@@ -1217,7 +1223,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       container.innerHTML = '';
 
       if (recipes.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">No recipes in library yet. Add recipes in the Recipe Library tab!</p>`;
+        container.innerHTML = `<p class="text-xs text-stone-500 py-4 text-center font-pub-body">No recipes in cookery book yet. Add recipes under Cookery Book tab!</p>`;
         document.getElementById('ready-count-badge').textContent = `0 Ready`;
         return;
       }
@@ -1231,14 +1237,14 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
         const state = plannerState[r.id] || { selected: false, targetServings: r.baseServings };
 
         const card = document.createElement('div');
-        card.className = `p-3 rounded-xl border transition-all ${isReady ? 'bg-emerald-50 border-emerald-300' : 'bg-slate-50 border-slate-200'}`;
+        card.className = `p-3 rounded-xl border-2 transition-all ${isReady ? 'bg-emerald-50 border-emerald-300' : 'bg-stone-100 border-stone-200'}`;
         card.innerHTML = `
           <div class="flex items-start justify-between gap-2">
-            <label class="flex items-center gap-2 cursor-pointer font-bold text-xs text-slate-800">
-              <input type="checkbox" ${state.selected ? 'checked' : ''} onchange="togglePlannerRecipe('${r.id}', this.checked)" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-600 border-slate-300">
+            <label class="flex items-center gap-2 cursor-pointer font-bold text-xs text-stone-900 font-pub-body">
+              <input type="checkbox" ${state.selected ? 'checked' : ''} onchange="togglePlannerRecipe('${r.id}', this.checked)" class="w-4 h-4 rounded text-[#721c24] focus:ring-[#721c24] border-stone-300">
               <span>${r.name}</span>
             </label>
-            ${isReady ? '<span class="text-[10px] font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-full">$0 READY</span>' : '<span class="text-[10px] font-semibold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">NEEDS STOCK</span>'}
+            ${isReady ? '<span class="text-[10px] font-bold bg-emerald-800 text-emerald-100 px-2 py-0.5 rounded-full font-pub-header">$0 READY</span>' : '<span class="text-[10px] font-semibold bg-stone-200 text-stone-600 px-2 py-0.5 rounded-full font-pub-header">NEEDS STOCK</span>'}
           </div>
         `;
         container.appendChild(card);
@@ -1256,7 +1262,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       let grandCost = 0;
 
       if (list.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">Select meals on the left to calculate store deficit.</p>`;
+        container.innerHTML = `<p class="text-xs text-stone-500 py-4 text-center font-pub-body">Select tavern feasts on left to calculate merchant deficit.</p>`;
         totalEl.textContent = `$0.00`;
         return;
       }
@@ -1264,13 +1270,13 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       list.forEach(item => {
         grandCost += item.cost;
         const div = document.createElement('div');
-        div.className = "flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs";
+        div.className = "flex justify-between items-center p-3 rounded-xl bg-[#f7efe3] border border-[#d4c3ab] text-xs font-pub-body";
         div.innerHTML = `
           <div>
-            <div class="font-bold text-slate-900">${item.name}</div>
-            <div class="text-slate-500 text-xs">Needed: ${item.needed} ${item.unit} | Deficit: <span class="font-bold text-amber-600">${item.deficit} ${item.unit}</span></div>
+            <div class="font-bold text-stone-900">${item.name}</div>
+            <div class="text-stone-600 text-xs">Needed: ${item.needed} ${item.unit} | Deficit: <span class="font-bold text-[#721c24]">${item.deficit} ${item.unit}</span></div>
           </div>
-          <div class="font-bold text-emerald-600 text-sm">$${item.cost.toFixed(2)}</div>
+          <div class="font-bold text-emerald-800 text-sm font-pub-header">$${item.cost.toFixed(2)}</div>
         `;
         container.appendChild(div);
       });
@@ -1284,10 +1290,10 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
 
       if (recipes.length === 0) {
         container.innerHTML = `
-          <div class="col-span-full bg-slate-50 p-8 rounded-2xl border border-slate-200 text-center space-y-2">
-            <i class="fa-solid fa-book-open text-3xl text-slate-300"></i>
-            <p class="text-sm font-semibold text-slate-600">Recipe library is empty.</p>
-            <p class="text-xs text-slate-400">Click "+ Add New Recipe" or "Import Recipe Text" above to enter custom family meals.</p>
+          <div class="col-span-full bg-[#f7efe3] p-8 rounded-2xl border-2 border-[#d4c3ab] text-center space-y-2">
+            <i class="fa-solid fa-book-open text-3xl text-stone-400"></i>
+            <p class="text-sm font-bold text-stone-800 font-pub-header">Cookery Book is empty.</p>
+            <p class="text-xs text-stone-600 font-pub-body">Click "+ Add New Recipe" or "Import Recipe Text" above to log house feasts.</p>
           </div>
         `;
         return;
@@ -1295,17 +1301,17 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
 
       recipes.forEach((r) => {
         const div = document.createElement('div');
-        div.className = "bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-2 flex flex-col justify-between";
+        div.className = "bg-[#fdfbf7] rounded-2xl p-4 border-2 border-[#d4c3ab] shadow-sm space-y-2 flex flex-col justify-between";
         const ingNames = r.ingredients.map(i => i.name).join(', ');
         div.innerHTML = `
           <div>
             <div class="flex justify-between items-start">
-              <h3 class="font-bold text-slate-900 text-sm">${r.name}</h3>
-              <button onclick="deleteRecipeById('${r.id}')" class="text-slate-400 hover:text-rose-600 text-xs p-1" title="Delete recipe"><i class="fa-solid fa-trash"></i></button>
+              <h3 class="font-bold text-stone-900 text-sm font-pub-body">${r.name}</h3>
+              <button onclick="deleteRecipeById('${r.id}')" class="text-stone-400 hover:text-rose-700 text-xs p-1" title="Delete recipe"><i class="fa-solid fa-trash"></i></button>
             </div>
-            <p class="text-xs text-slate-500 mt-2">Ingredients: ${ingNames}</p>
+            <p class="text-xs text-stone-600 mt-2 font-pub-body">Ingredients: ${ingNames}</p>
           </div>
-          <span class="text-xs font-bold text-indigo-600 border-t pt-2 block">${r.baseServings} Servings</span>
+          <span class="text-xs font-bold text-[#721c24] border-t border-stone-200 pt-2 block font-pub-header">${r.baseServings} Servings</span>
         `;
         container.appendChild(div);
       });
@@ -1315,19 +1321,19 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       ['dashboard', 'inventory', 'planner', 'synthesizer', 'recipes'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.add('hidden');
         const btn = document.getElementById(`nav-${t}`);
-        if (btn) btn.className = "px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800";
+        if (btn) btn.className = "px-3.5 py-2 rounded-lg text-amber-200/80 hover:bg-[#3d1c15] hover:text-amber-200 transition";
       });
 
       document.getElementById(`tab-${tab}`).classList.remove('hidden');
       const activeBtn = document.getElementById(`nav-${tab}`);
-      if (activeBtn) activeBtn.className = "px-3 py-2 rounded-lg bg-indigo-600 text-white shadow";
+      if (activeBtn) activeBtn.className = "px-3.5 py-2 rounded-lg bg-[#721c24] text-amber-200 border border-amber-600/50 shadow";
     }
 
     function filterContainer(zone) {
       activeContainerFilter = zone;
       ['All', 'Boxes', 'Jars', 'Cans', 'Bags', 'Fridge', 'Freezer'].forEach(z => {
         const btn = document.getElementById(`btn-filter-${z}`);
-        if (btn) btn.className = z === zone ? "px-3 py-1.5 rounded-lg bg-slate-900 text-white" : "px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50";
+        if (btn) btn.className = z === zone ? "px-3 py-1.5 rounded-lg bg-[#2a140e] text-amber-200" : "px-3 py-1.5 rounded-lg bg-white border border-stone-300 text-stone-800 hover:bg-stone-100";
       });
       renderInventoryGrid();
     }
@@ -1373,10 +1379,10 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
       const div = document.createElement('div');
       div.className = "flex gap-2 items-center recipe-ing-row";
       div.innerHTML = `
-        <input type="text" placeholder="Ingredient Name" class="ing-name flex-1 px-2 py-1 bg-slate-50 border rounded text-xs outline-none">
-        <input type="number" step="0.01" placeholder="Qty" class="ing-qty w-16 px-2 py-1 bg-slate-50 border rounded text-xs outline-none">
-        <input type="text" placeholder="Unit" class="ing-unit w-16 px-2 py-1 bg-slate-50 border rounded text-xs outline-none">
-        <button type="button" onclick="this.parentElement.remove()" class="text-rose-600 font-bold px-1 text-xs">X</button>
+        <input type="text" placeholder="Ingredient Name" class="ing-name flex-1 px-2 py-1 bg-[#f7efe3] border rounded text-xs outline-none">
+        <input type="number" step="0.01" placeholder="Qty" class="ing-qty w-16 px-2 py-1 bg-[#f7efe3] border rounded text-xs outline-none">
+        <input type="text" placeholder="Unit" class="ing-unit w-16 px-2 py-1 bg-[#f7efe3] border rounded text-xs outline-none">
+        <button type="button" onclick="this.parentElement.remove()" class="text-rose-700 font-bold px-1 text-xs">X</button>
       `;
       container.appendChild(div);
     }
