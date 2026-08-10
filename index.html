@@ -6,6 +6,8 @@
   <title>Queensbury Manor: Food & Inventory Commander</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Tesseract.js for OCR Image Receipt Processing -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
   <style>
     [x-cloak] { display: none !important; }
   </style>
@@ -106,7 +108,7 @@
               <span class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded" id="dash-inv-count">0 Items</span>
             </div>
             <h3 class="font-bold text-base text-slate-900 mb-1">1. Log Pantry Stock</h3>
-            <p class="text-xs text-slate-500">Scan, type, or import receipts for jar, bottle, can, box, and bag counts.</p>
+            <p class="text-xs text-slate-500">Scan, type, or upload photo receipts for jar, bottle, can, box, and bag counts.</p>
           </div>
           <button class="w-full py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl uppercase">Start Step 1 &rarr;</button>
         </div>
@@ -164,9 +166,9 @@
           <div class="sm:col-span-3">
             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Shelf Zone</label>
             <select id="ov-zone" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-600">
+              <option value="Boxes">📦 Box Bunker</option>
               <option value="Jars">🏺 Jar Vault</option>
               <option value="Cans">🥫 Can Citadel</option>
-              <option value="Boxes">📦 Box Bunker</option>
               <option value="Bags">🛍️ Bag Depot</option>
               <option value="Fridge">🧀 Fridge</option>
               <option value="Freezer">❄️ Freezer</option>
@@ -181,10 +183,10 @@
           <div class="sm:col-span-3">
             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Unit</label>
             <select id="ov-unit" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-semibold text-slate-900 outline-none focus:ring-2 focus:ring-indigo-600">
+              <option value="box">box</option>
               <option value="jar">jar</option>
               <option value="bottle">bottle</option>
               <option value="can">can</option>
-              <option value="box">box</option>
               <option value="bag">bag</option>
               <option value="item">item (count)</option>
               <option value="oz">oz</option>
@@ -232,9 +234,9 @@
       <div class="flex flex-wrap gap-2 justify-between items-center border-b border-slate-200 pb-3">
         <div class="flex flex-wrap gap-1 text-xs font-bold">
           <button onclick="filterContainer('All')" id="btn-filter-All" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white">All Shelves</button>
+          <button onclick="filterContainer('Boxes')" id="btn-filter-Boxes" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">📦 Boxes</button>
           <button onclick="filterContainer('Jars')" id="btn-filter-Jars" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🏺 Jars & Bottles</button>
           <button onclick="filterContainer('Cans')" id="btn-filter-Cans" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🥫 Cans</button>
-          <button onclick="filterContainer('Boxes')" id="btn-filter-Boxes" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">📦 Boxes</button>
           <button onclick="filterContainer('Bags')" id="btn-filter-Bags" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🛍️ Bags</button>
           <button onclick="filterContainer('Fridge')" id="btn-filter-Fridge" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">🧀 Fridge</button>
           <button onclick="filterContainer('Freezer')" id="btn-filter-Freezer" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">❄️ Freezer</button>
@@ -314,9 +316,19 @@
     <!-- TAB 4: RECIPE LIBRARY -->
     <section id="tab-recipes" class="hidden space-y-6">
       <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
-        <div class="flex justify-between items-center border-b pb-3">
-          <h2 class="font-bold text-base text-slate-900 uppercase">Recipe Library</h2>
-          <button onclick="openCustomRecipeModal()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">+ Add New Recipe</button>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-2">
+          <div>
+            <h2 class="font-bold text-base text-slate-900 uppercase">Recipe Library</h2>
+            <p class="text-xs text-slate-500">Manage family recipes and custom imported meals</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="openRecipeImportModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase shadow transition flex items-center gap-1.5">
+              <i class="fa-solid fa-file-import"></i> Import Recipe Text / URL
+            </button>
+            <button onclick="openCustomRecipeModal()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 self-center">
+              + Add New Recipe
+            </button>
+          </div>
         </div>
         <div id="recipe-library-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       </div>
@@ -381,31 +393,86 @@
     </div>
   </div>
 
-  <!-- GROCERY RECEIPT IMPORT MODAL -->
+  <!-- GROCERY RECEIPT IMPORT MODAL (WITH IMAGE UPLOAD / CAMERA OCR) -->
   <div id="receipt-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-4 border border-slate-200">
       <div class="flex justify-between items-center border-b pb-2">
         <h3 class="font-bold text-base text-slate-900 uppercase flex items-center gap-2">
-          <i class="fa-solid fa-receipt text-emerald-600"></i> Import Grocery Receipt Text
+          <i class="fa-solid fa-receipt text-emerald-600"></i> Import Grocery Receipt
         </h3>
         <button onclick="closeReceiptModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
       </div>
 
-      <p class="text-xs text-slate-500">Paste your receipt text below (or text copied from an e-receipt/online order like Instacart/Walmart/Kroger). The importer cleans up codes, price numbers, and auto-detects shelf categories!</p>
+      <p class="text-xs text-slate-500">Upload a receipt photo/scan or paste receipt text directly. The importer cleans up store codes and auto-detects shelf categories!</p>
+
+      <!-- Explicit Attachment / Image File Upload Input -->
+      <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl p-4 text-center space-y-2">
+        <i class="fa-solid fa-cloud-arrow-up text-2xl text-emerald-600"></i>
+        <div class="text-xs font-bold text-slate-800">Upload Receipt Photo or Scan</div>
+        <p class="text-[10px] text-slate-400">Select an image file or take a photo with your camera</p>
+        
+        <input type="file" id="receipt-file-input" accept="image/*" capture="environment" onchange="handleReceiptImageUpload(event)" class="hidden">
+        
+        <button type="button" onclick="document.getElementById('receipt-file-input').click()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-lg text-xs shadow transition inline-flex items-center gap-2">
+          <i class="fa-solid fa-camera"></i> Select Photo / Capture Image
+        </button>
+
+        <div id="ocr-status" class="text-xs font-semibold text-indigo-600 hidden pt-1">
+          <i class="fa-solid fa-spinner fa-spin mr-1"></i> Scanning image for receipt text...
+        </div>
+      </div>
+
+      <div class="relative flex py-1 items-center">
+        <div class="flex-grow border-t border-slate-200"></div>
+        <span class="flex-shrink mx-3 text-[10px] font-bold text-slate-400 uppercase">Or Paste Text Line Items</span>
+        <div class="flex-grow border-t border-slate-200"></div>
+      </div>
 
       <div>
-        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Receipt Text / Line Items</label>
-        <textarea id="receipt-text-input" rows="8" placeholder="Paste receipt lines here, e.g.:
+        <textarea id="receipt-text-input" rows="6" placeholder="Paste receipt lines here, e.g.:
 1 BLACK BEANS $0.99
-2 PENNE PASTA $1.49
+2 PASTA, RIGATONI 16OZ $1.49
 SPAGHETTI SAUCE 24OZ
-CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs text-slate-800 outline-none focus:ring-2 focus:ring-emerald-600"></textarea>
+RICE, MED GRAIN 2LBS" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs text-slate-800 outline-none focus:ring-2 focus:ring-emerald-600"></textarea>
       </div>
 
       <div class="flex justify-end gap-2 pt-2 border-t">
         <button type="button" onclick="closeReceiptModal()" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold text-xs rounded-lg">Cancel</button>
         <button onclick="parseAndImportReceipt()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg uppercase shadow">
           Bulk Import Items &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECIPE IMPORT MODAL -->
+  <div id="recipe-import-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white max-w-lg w-full p-6 rounded-2xl shadow-2xl space-y-4 border border-slate-200">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-bold text-base text-slate-900 uppercase flex items-center gap-2">
+          <i class="fa-solid fa-file-import text-indigo-600"></i> Import Recipe Text or Web Page
+        </h3>
+        <button onclick="closeRecipeImportModal()" class="text-slate-400 hover:text-slate-600 font-bold">&times;</button>
+      </div>
+
+      <p class="text-xs text-slate-500">Paste recipe text, an ingredient list, or scraped text from a web page URL. The parser extracts the recipe title and ingredient lines automatically!</p>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Recipe Name (Optional Title Override)</label>
+        <input type="text" id="import-recipe-title" placeholder="e.g. Grandma's Chili Casserole" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold outline-none mb-3">
+
+        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Recipe Content / Ingredients</label>
+        <textarea id="import-recipe-text" rows="7" placeholder="Paste ingredients or text here, e.g.:
+15 oz Black Beans
+16 oz Rigatoni Pasta
+24 oz Spaghetti Sauce
+1 cup Cheddar Cheese" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs text-slate-800 outline-none focus:ring-2 focus:ring-indigo-600"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button type="button" onclick="closeRecipeImportModal()" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold text-xs rounded-lg">Cancel</button>
+        <button onclick="parseAndImportRecipeText()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg uppercase shadow">
+          Import Recipe &rarr;
         </button>
       </div>
     </div>
@@ -424,9 +491,9 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Shelf Zone</label>
             <select id="modal-zone" class="w-full px-2 py-2 bg-slate-50 border rounded-lg text-sm font-semibold outline-none">
+              <option value="Boxes">📦 Boxes</option>
               <option value="Jars">🏺 Jars & Bottles</option>
               <option value="Cans">🥫 Cans</option>
-              <option value="Boxes">📦 Boxes</option>
               <option value="Bags">🛍️ Bags</option>
               <option value="Fridge">🧀 Fridge</option>
               <option value="Freezer">❄️ Freezer</option>
@@ -490,8 +557,8 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
       { keywords: ['ketchup', 'mustard', 'sauce', 'dressing', 'syrup', 'oil', 'vinegar', 'soy sauce', 'hot sauce'], zone: 'Jars', unit: 'bottle', pkgSize: 1, price: 2.99 },
       { keywords: ['peanut butter', 'jam', 'jelly', 'salsa', 'marinara', 'mayo', 'pickles'], zone: 'Jars', unit: 'jar', pkgSize: 1, price: 2.99 },
       { keywords: ['beans', 'black beans', 'chickpeas', 'tomatoes', 'diced tomatoes', 'soup', 'tuna', 'corn', 'coconut milk'], zone: 'Cans', unit: 'can', pkgSize: 1, price: 0.99 },
-      { keywords: ['pasta', 'penne', 'spaghetti', 'rice', 'cereal', 'mac', 'macaroni', 'oats', 'pancake', 'stuffing', 'mix'], zone: 'Boxes', unit: 'box', pkgSize: 1, price: 1.49 },
-      { keywords: ['flour', 'sugar', 'chips', 'tortillas', 'nuts', 'pretzels', 'popcorn', 'snack'], zone: 'Bags', unit: 'bag', pkgSize: 1, price: 2.49 },
+      { keywords: ['pasta', 'penne', 'spaghetti', 'rice', 'cereal', 'mac', 'macaroni', 'oats', 'pancake', 'stuffing', 'mix', 'baking powder', 'baking soda'], zone: 'Boxes', unit: 'box', pkgSize: 1, price: 1.49 },
+      { keywords: ['flour', 'sugar', 'chips', 'tortillas', 'nuts', 'pretzels', 'popcorn', 'snack', 'salt'], zone: 'Bags', unit: 'bag', pkgSize: 1, price: 2.49 },
       { keywords: ['milk', 'cheese', 'butter', 'eggs', 'yogurt', 'sour cream', 'carrots', 'peppers', 'lettuce'], zone: 'Fridge', unit: 'item', pkgSize: 1, price: 2.99 },
       { keywords: ['chicken', 'beef', 'pork', 'ground beef', 'peas', 'frozen', 'waffles'], zone: 'Freezer', unit: 'item', pkgSize: 1, price: 4.99 }
     ];
@@ -500,6 +567,40 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
     let recipes = [];
     let plannerState = {};
     let activeContainerFilter = 'All';
+    let editingItemId = null;
+
+    function cleanIngredientName(rawName) {
+      if (!rawName) return '';
+      let str = rawName.trim();
+      str = str.replace(/\b\d+(\.\d+)?\s*(oz|lbs?|g|kg|ct)\b/gi, '');
+      if (str.includes(',')) {
+        const parts = str.split(',').map(p => p.trim()).filter(Boolean);
+        if (parts.length === 2) {
+          str = `${parts[1]} ${parts[0]}`;
+        }
+      }
+      return str.replace(/\s+/g, ' ').trim().toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function findMatchingInventoryItem(ingName) {
+      if (!ingName) return null;
+      const ingLower = ingName.toLowerCase().trim();
+      const ingClean = cleanIngredientName(ingName).toLowerCase();
+
+      let match = inventory.find(i => i.name.toLowerCase().trim() === ingLower);
+      if (match) return match;
+
+      match = inventory.find(i => cleanIngredientName(i.name).toLowerCase() === ingClean);
+      if (match) return match;
+
+      match = inventory.find(i => {
+        const invLower = i.name.toLowerCase();
+        const invClean = cleanIngredientName(i.name).toLowerCase();
+        return invLower.includes(ingLower) || invClean.includes(ingLower) || ingLower.includes(invClean) || invClean.includes(ingClean);
+      });
+
+      return match;
+    }
 
     function initData() {
       const storedInv = localStorage.getItem('qm_inventory');
@@ -563,11 +664,86 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
     function openReceiptModal() { document.getElementById('receipt-modal').classList.remove('hidden'); }
     function closeReceiptModal() { document.getElementById('receipt-modal').classList.add('hidden'); }
 
-    // --- RECEIPT OCR & PARSER LOGIC ---
+    function openRecipeImportModal() { document.getElementById('recipe-import-modal').classList.remove('hidden'); }
+    function closeRecipeImportModal() { document.getElementById('recipe-import-modal').classList.add('hidden'); }
+
+    // --- RECEIPT IMAGE UPLOAD & OCR READER ---
+    function handleReceiptImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const statusEl = document.getElementById('ocr-status');
+      statusEl.classList.remove('hidden');
+
+      Tesseract.recognize(file, 'eng', { logger: m => console.log(m) })
+        .then(({ data: { text } }) => {
+          statusEl.classList.add('hidden');
+          document.getElementById('receipt-text-input').value = text;
+          alert("Receipt image scanned! Review the text below and click Bulk Import Items.");
+        })
+        .catch(err => {
+          statusEl.classList.add('hidden');
+          alert("Failed to scan receipt photo. Please try pasting the text manually.");
+          console.error(err);
+        });
+    }
+
+    function parseAndImportRecipeText() {
+      const rawText = document.getElementById('import-recipe-text').value;
+      const titleOverride = document.getElementById('import-recipe-title').value.trim();
+
+      if (!rawText.trim()) {
+        alert("Please paste recipe text or ingredients first!");
+        return;
+      }
+
+      const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+      let extractedTitle = titleOverride || "Imported Recipe " + (recipes.length + 1);
+      const ingredients = [];
+
+      lines.forEach(line => {
+        if (line.toLowerCase().startsWith('http') || line.toLowerCase().includes('servings:') || line.toLowerCase().includes('prep time:')) return;
+
+        const match = line.match(/^([\d\/\.\s]+)?\s*(oz|can|box|bag|cup|tsp|tbsp|lb|g|pkg|item)?\s+(.+)/i);
+        if (match) {
+          let qtyStr = match[1] ? match[1].trim() : "1";
+          let qty = parseFloat(qtyStr) || 1;
+          let unit = match[2] ? match[2].toLowerCase() : "item";
+          let name = match[3] ? match[3].trim() : line;
+
+          ingredients.push({ name: cleanIngredientName(name), qty: qty, unit: unit });
+        } else if (line.length > 2) {
+          ingredients.push({ name: cleanIngredientName(line), qty: 1, unit: 'item' });
+        }
+      });
+
+      if (ingredients.length === 0) {
+        alert("Could not extract ingredients. Please check the text format!");
+        return;
+      }
+
+      const newRecipe = {
+        id: 'rec-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+        name: extractedTitle,
+        baseServings: 4,
+        ingredients: ingredients
+      };
+
+      recipes.push(newRecipe);
+      plannerState[newRecipe.id] = { selected: false, targetServings: 4 };
+
+      saveData();
+      renderAll();
+      closeRecipeImportModal();
+      document.getElementById('import-recipe-text').value = '';
+      document.getElementById('import-recipe-title').value = '';
+      alert(`Imported recipe "${extractedTitle}" with ${ingredients.length} ingredients!`);
+    }
+
     function parseAndImportReceipt() {
       const rawText = document.getElementById('receipt-text-input').value;
       if (!rawText.trim()) {
-        alert("Please paste receipt text first!");
+        alert("Please paste or scan receipt text first!");
         return;
       }
 
@@ -578,29 +754,26 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
         let cleaned = line.trim();
         if (!cleaned) return;
 
-        // Skip receipt headers/footers like Subtotal, Tax, Total, Store ID
         const skipKeywords = ['subtotal', 'total', 'tax', 'visa', 'mastercard', 'cash', 'change', 'balance', 'thank you', 'receipt', 'store'];
         if (skipKeywords.some(kw => cleaned.toLowerCase().includes(kw))) return;
 
-        // Clean out leading numbers or price amounts ($x.xx)
         cleaned = cleaned.replace(/\$\d+(\.\d{2})?/g, '');
-        cleaned = cleaned.replace(/\b\d{12,14}\b/g, ''); // UPC codes
-        cleaned = cleaned.replace(/[\d\.]+\s*(lb|oz|ea)\b/gi, ''); // Weights
+        cleaned = cleaned.replace(/\b\d{12,14}\b/g, '');
+        cleaned = cleaned.replace(/[\d\.]+\s*(lb|oz|ea)\b/gi, '');
         cleaned = cleaned.trim();
 
         if (cleaned.length < 3) return;
 
-        // Match category via AUTO_RULES
         const lower = cleaned.toLowerCase();
         let matchedRule = AUTO_RULES.find(r => r.keywords.some(kw => lower.includes(kw)));
         if (!matchedRule) {
-          matchedRule = { zone: 'Boxes', unit: 'item', pkgSize: 1, price: 1.99 };
+          matchedRule = { zone: 'Boxes', unit: 'box', pkgSize: 1, price: 1.99 };
         }
 
-        const existingIdx = inventory.findIndex(i => i.name.toLowerCase() === cleaned.toLowerCase());
+        const existingItem = findMatchingInventoryItem(cleaned);
 
-        if (existingIdx >= 0) {
-          inventory[existingIdx].inStock += 1;
+        if (existingItem) {
+          existingItem.inStock += 1;
         } else {
           inventory.push({
             id: 'inv-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
@@ -668,13 +841,13 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
       let matchedRule = AUTO_RULES.find(r => r.keywords.some(kw => lower.includes(kw)));
 
       if (!matchedRule) {
-        matchedRule = { zone: 'Boxes', unit: 'item', pkgSize: 1, price: 1.99 };
+        matchedRule = { zone: 'Boxes', unit: 'box', pkgSize: 1, price: 1.99 };
       }
 
-      const existingIdx = inventory.findIndex(i => i.name.toLowerCase() === rawName.toLowerCase());
+      const existingItem = findMatchingInventoryItem(rawName);
 
-      if (existingIdx >= 0) {
-        inventory[existingIdx].inStock += 1;
+      if (existingItem) {
+        existingItem.inStock += 1;
       } else {
         inventory.push({
           id: 'inv-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
@@ -701,6 +874,37 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
       }
     }
 
+    function enableInlineEdit(id) {
+      editingItemId = id;
+      renderInventoryGrid();
+    }
+
+    function cancelInlineEdit() {
+      editingItemId = null;
+      renderInventoryGrid();
+    }
+
+    function saveInlineEdit(id) {
+      const item = inventory.find(i => i.id === id);
+      if (!item) return;
+
+      const newName = document.getElementById(`edit-name-${id}`).value.trim();
+      const newStock = parseFloat(document.getElementById(`edit-stock-${id}`).value) || 1;
+      const newUnit = document.getElementById(`edit-unit-${id}`).value;
+      const newZone = document.getElementById(`edit-zone-${id}`).value;
+
+      if (newName) {
+        item.name = newName;
+        item.inStock = newStock;
+        item.unit = newUnit;
+        item.zone = newZone;
+        saveData();
+      }
+
+      editingItemId = null;
+      renderAll();
+    }
+
     function deleteInventoryItemById(id) {
       inventory = inventory.filter(i => i.id !== id);
       saveData();
@@ -720,7 +924,7 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
       const scale = state.targetServings / recipe.baseServings;
 
       for (let ing of recipe.ingredients) {
-        const invItem = inventory.find(i => i.name.toLowerCase() === ing.name.toLowerCase());
+        const invItem = findMatchingInventoryItem(ing.name);
         const needed = ing.qty * scale;
         if (!invItem || invItem.inStock < needed) return false;
       }
@@ -747,7 +951,7 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
       const netList = [];
       Object.keys(grossDemand).forEach(key => {
         const item = grossDemand[key];
-        const invItem = inventory.find(i => i.name.toLowerCase() === key);
+        const invItem = findMatchingInventoryItem(item.displayName);
 
         const owned = invItem ? invItem.inStock : 0;
         const deficit = Math.max(0, item.totalNeeded - owned);
@@ -782,11 +986,11 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
         if (state && state.selected) {
           const scale = state.targetServings / r.baseServings;
           r.ingredients.forEach(ing => {
-            const invItem = inventory.find(i => i.name.toLowerCase() === ing.name.toLowerCase());
+            const invItem = findMatchingInventoryItem(ing.name);
             if (invItem) {
               const amountUsed = ing.qty * scale;
               invItem.inStock = Math.max(0, Math.round((invItem.inStock - amountUsed) * 100) / 100);
-              deductedLog.push(`${ing.name}: -${amountUsed} ${ing.unit}`);
+              deductedLog.push(`${invItem.name}: -${amountUsed} ${ing.unit}`);
             }
           });
           count++;
@@ -804,16 +1008,20 @@ CHICKEN BREAST 2LB" class="w-full p-3 bg-slate-50 border border-slate-300 rounde
     }
 
     function generatePantryRaidPrompt() {
-      const availableItems = inventory.filter(i => i.inStock > 0).map(i => `${i.name} (${i.inStock} ${i.unit})`).join(', ');
-      
-      if (!availableItems) {
+      const masterStock = inventory.filter(item => parseFloat(item.inStock) > 0);
+
+      if (masterStock.length === 0) {
         document.getElementById('synthesizer-output').value = "No pantry stock logged yet! Log items under 'Pantry Stock' first.";
         return;
       }
 
+      const availableItems = masterStock
+        .map(i => `${cleanIngredientName(i.name)} (${i.inStock} ${i.unit})`)
+        .join(', ');
+
       const promptText = `I need to stretch my family's meals for the next 14 days without buying extra groceries.
 
-Here is my exact remaining inventory:
+Here is my complete, exact remaining inventory across all shelves:
 ${availableItems}
 
 Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bakes, grain bowls, or pan meals) using ONLY these ingredients. Format each idea with a title, required quantities, and brief cooking steps.`;
@@ -928,26 +1136,78 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
 
       items.forEach((item) => {
         const zoneIcons = { Jars: '🏺', Cans: '🥫', Boxes: '📦', Bags: '🛍️', Fridge: '🧀', Freezer: '❄️' };
-        
         const card = document.createElement('div');
         card.className = "bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3";
-        card.innerHTML = `
-          <div>
-            <div class="flex justify-between items-start">
-              <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">${zoneIcons[item.zone] || '📦'} ${item.zone}</span>
-              <button onclick="deleteInventoryItemById('${item.id}')" class="text-slate-400 hover:text-rose-600 text-xs p-1" title="Delete item"><i class="fa-solid fa-trash"></i></button>
+
+        if (editingItemId === item.id) {
+          card.innerHTML = `
+            <div class="space-y-2">
+              <div class="flex justify-between items-center border-b pb-1">
+                <span class="text-xs font-bold text-indigo-600 uppercase">Editing Item</span>
+                <button onclick="cancelInlineEdit()" class="text-slate-400 hover:text-slate-600 text-xs font-bold">&times;</button>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase">Name</label>
+                <input type="text" id="edit-name-${item.id}" value="${item.name}" class="w-full px-2 py-1 border rounded text-xs font-semibold text-slate-900">
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase">Qty</label>
+                  <input type="number" id="edit-stock-${item.id}" value="${item.inStock}" class="w-full px-2 py-1 border rounded text-xs font-bold text-slate-900">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase">Unit</label>
+                  <select id="edit-unit-${item.id}" class="w-full px-1 py-1 border rounded text-xs font-semibold">
+                    <option value="box" ${item.unit === 'box' ? 'selected' : ''}>box</option>
+                    <option value="jar" ${item.unit === 'jar' ? 'selected' : ''}>jar</option>
+                    <option value="bottle" ${item.unit === 'bottle' ? 'selected' : ''}>bottle</option>
+                    <option value="can" ${item.unit === 'can' ? 'selected' : ''}>can</option>
+                    <option value="bag" ${item.unit === 'bag' ? 'selected' : ''}>bag</option>
+                    <option value="item" ${item.unit === 'item' ? 'selected' : ''}>item</option>
+                    <option value="oz" ${item.unit === 'oz' ? 'selected' : ''}>oz</option>
+                    <option value="lb" ${item.unit === 'lb' ? 'selected' : ''}>lb</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-500 uppercase">Zone</label>
+                  <select id="edit-zone-${item.id}" class="w-full px-1 py-1 border rounded text-xs font-semibold">
+                    <option value="Boxes" ${item.zone === 'Boxes' ? 'selected' : ''}>Boxes</option>
+                    <option value="Jars" ${item.zone === 'Jars' ? 'selected' : ''}>Jars</option>
+                    <option value="Cans" ${item.zone === 'Cans' ? 'selected' : ''}>Cans</option>
+                    <option value="Bags" ${item.zone === 'Bags' ? 'selected' : ''}>Bags</option>
+                    <option value="Fridge" ${item.zone === 'Fridge' ? 'selected' : ''}>Fridge</option>
+                    <option value="Freezer" ${item.zone === 'Freezer' ? 'selected' : ''}>Freezer</option>
+                  </select>
+                </div>
+              </div>
+              <div class="flex justify-end gap-2 pt-2 border-t">
+                <button onclick="cancelInlineEdit()" class="px-2.5 py-1 bg-slate-100 text-slate-600 font-bold text-xs rounded">Cancel</button>
+                <button onclick="saveInlineEdit('${item.id}')" class="px-3 py-1 bg-indigo-600 text-white font-bold text-xs rounded shadow">Save</button>
+              </div>
             </div>
-            <h3 class="font-bold text-slate-900 text-base mt-2">${item.name}</h3>
-            <p class="text-xs text-slate-500 mt-1">In Stock: <span class="font-bold text-indigo-600 text-sm">${item.inStock} ${item.unit}</span></p>
-          </div>
-          <div class="flex items-center justify-between border-t border-slate-100 pt-2">
-            <span class="text-xs text-slate-400 font-medium">$${item.price.toFixed(2)} / 1 ${item.unit}</span>
-            <div class="flex gap-1">
-              <button onclick="adjustStockById('${item.id}', -1)" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-800 text-sm flex items-center justify-center">-</button>
-              <button onclick="adjustStockById('${item.id}', 1)" class="w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm flex items-center justify-center shadow-sm">+</button>
+          `;
+        } else {
+          card.innerHTML = `
+            <div>
+              <div class="flex justify-between items-start">
+                <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">${zoneIcons[item.zone] || '📦'} ${item.zone}</span>
+                <div class="flex items-center gap-1">
+                  <button onclick="enableInlineEdit('${item.id}')" class="text-slate-400 hover:text-indigo-600 text-xs p-1" title="Edit item"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button onclick="deleteInventoryItemById('${item.id}')" class="text-slate-400 hover:text-rose-600 text-xs p-1" title="Delete item"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </div>
+              <h3 class="font-bold text-slate-900 text-base mt-2">${item.name}</h3>
+              <p class="text-xs text-slate-500 mt-1">In Stock: <span class="font-bold text-indigo-600 text-sm">${item.inStock} ${item.unit}</span></p>
             </div>
-          </div>
-        `;
+            <div class="flex items-center justify-between border-t border-slate-100 pt-2">
+              <span class="text-xs text-slate-400 font-medium">$${item.price.toFixed(2)} / 1 ${item.unit}</span>
+              <div class="flex gap-1">
+                <button onclick="adjustStockById('${item.id}', -1)" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-slate-800 text-sm flex items-center justify-center">-</button>
+                <button onclick="adjustStockById('${item.id}', 1)" class="w-8 h-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-sm flex items-center justify-center shadow-sm">+</button>
+              </div>
+            </div>
+          `;
+        }
         container.appendChild(card);
       });
     }
@@ -1027,7 +1287,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
           <div class="col-span-full bg-slate-50 p-8 rounded-2xl border border-slate-200 text-center space-y-2">
             <i class="fa-solid fa-book-open text-3xl text-slate-300"></i>
             <p class="text-sm font-semibold text-slate-600">Recipe library is empty.</p>
-            <p class="text-xs text-slate-400">Click "+ Add New Recipe" above to enter custom family meals.</p>
+            <p class="text-xs text-slate-400">Click "+ Add New Recipe" or "Import Recipe Text" above to enter custom family meals.</p>
           </div>
         `;
         return;
@@ -1065,7 +1325,7 @@ Please generate 5 creative, family-friendly stretch meal ideas (casseroles, bake
 
     function filterContainer(zone) {
       activeContainerFilter = zone;
-      ['All', 'Jars', 'Cans', 'Boxes', 'Bags', 'Fridge', 'Freezer'].forEach(z => {
+      ['All', 'Boxes', 'Jars', 'Cans', 'Bags', 'Fridge', 'Freezer'].forEach(z => {
         const btn = document.getElementById(`btn-filter-${z}`);
         if (btn) btn.className = z === zone ? "px-3 py-1.5 rounded-lg bg-slate-900 text-white" : "px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50";
       });
